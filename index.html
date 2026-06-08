@@ -997,7 +997,95 @@
         document.getElementById('telaEntrar').style.display = 'none';
         document.getElementById('painelAdm').style.display = 'block';
         listarPendentes();
-        atualizar
+                atualizarSaldoTela();
+      } else if (senha!== null) {
+        alert("Senha errada!");
+      }
+    }
+
+    function sairAdm() {
+      document.getElementById('painelAdm').style.display = 'none';
+      document.getElementById('telaFeed').style.display = 'block';
+    }
+
+    function listarPendentes() {
+      const lista = document.getElementById('listaPendentes');
+      lista.innerHTML = '';
+      if (pendentes.length === 0) {
+        lista.innerHTML = '<p style="color:#94a3b8;">Nenhum anúncio pendente.</p>';
+        return;
+      }
+      pendentes.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'post-pendente';
+        const midiaHTML = p.tipo === 'video'
+     ? `<video src="${p.midia}" style="width:100%;border-radius:8px;margin:10px 0;" controls></video>`
+          : `<img src="${p.midia}" style="width:100%;border-radius:8px;margin:10px 0;">`;
+
+        div.innerHTML = `
+          <p><strong>${p.nome}</strong></p>
+          <p style="margin:10px 0;color:#cbd5e1;">${p.texto}</p>
+          ${midiaHTML}
+          <p style="font-size:12px;color:#64748b;">${p.data}</p>
+          <button class="btn btn-verde" onclick="aprovarPost('${p.id}')" style="margin-top:10px;">Aprovar Post</button>
+          <button class="btn btn-vermelho" onclick="rejeitarPost('${p.id}')">Rejeitar</button>
+        `;
+        lista.appendChild(div);
+      });
+    }
+
+    function aprovarPost(id) {
+      const index = pendentes.findIndex(p => p.id === id);
+      if (index!== -1) {
+        const postAprovado = pendentes[index];
+        postAprovado.curtidas = 0;
+        postAprovado.comentarios = 0;
+        postAprovado.seguidores = 0;
+        postAprovado.curtidoPor = [];
+        postAprovado.views = 0;
+        postAprovado.viewPor = [];
+        postAprovado.comentariosLista = [];
+        postAprovado.empresaId = postAprovado.nome.replace(/\s/g, '').toLowerCase() + Date.now();
+        posts.push(postAprovado);
+        pendentes.splice(index, 1);
+
+        fundoUsuarios += VALOR_POST * PORCENTAGEM_USUARIO;
+        localStorage.setItem('anunciarFundo', fundoUsuarios);
+        localStorage.setItem('anunciarPosts', JSON.stringify(posts));
+        localStorage.setItem('anunciarPendentes', JSON.stringify(pendentes));
+        listarPendentes();
+        renderizarFeed();
+        atualizarSaldoTela();
+        alert("Post aprovado! R$ 5 foi pro fundo dos usuários.");
+      }
+    }
+
+    function rejeitarPost(id) {
+      if (confirm("Tem certeza? O anunciante vai perder o dinheiro.")) {
+        const index = pendentes.findIndex(p => p.id === id);
+        if (index!== -1) {
+          pendentes.splice(index, 1);
+          localStorage.setItem('anunciarPendentes', JSON.stringify(pendentes));
+          listarPendentes();
+          alert("Post rejeitado.");
+        }
+      }
+    }
+
+    function salvarChavePix() {
+      const novaChave = document.getElementById('novaChavePix').value.trim();
+      if (!novaChave) {
+        alert("Digite uma chave Pix válida!");
+        return;
+      }
+      localStorage.setItem('anunciarChavePix', novaChave);
+      document.getElementById('chavePix').innerText = novaChave;
+      document.getElementById('novaChavePix').value = '';
+      alert("Chave Pix salva! Agora aparece pro anunciante.");
+    }
+  </script>
+</body>
+</html>
     }
 
     function atualizarSaldoTela() {
