@@ -687,11 +687,7 @@
         atualizarSaldoTela();
         alert("Post aprovado! R$ 5 foi pro fundo dos usuários.");
       }
-    }
-
-    function rejeitarPost(id) {
-      if (confirm("Tem certeza? O anunciante vai perder o dinheiro."
-                      function rejeitarPost(id) {
+    }    function rejeitarPost(id) {
       if (confirm("Tem certeza? O anunciante vai perder o dinheiro.")) {
         const index = pendentes.findIndex(p => p.id === id);
         if (index!== -1) {
@@ -717,3 +713,5 @@
   </script>
 </body>
 </html>
+
+    
