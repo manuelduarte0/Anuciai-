@@ -12,8 +12,8 @@
       color: white;
       padding-bottom: 80px;
     }
-    .container { max-width: 500px; margin: 0 auto; padding: 15px; }
-    .header {
+   .container { max-width: 500px; margin: 0 auto; padding: 15px; }
+   .header {
       background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
       padding: 20px;
       border-radius: 15px;
@@ -21,9 +21,9 @@
       margin-bottom: 15px;
       box-shadow: 0 5px 20px rgba(245, 158, 11, 0.3);
     }
-    .header h1 { font-size: 26px; color: #0f172a; }
-    .header p { color: #0f172a; font-weight: 600; margin-top: 5px; }
-    .saldo-box {
+   .header h1 { font-size: 26px; color: #0f172a; }
+   .header p { color: #0f172a; font-weight: 600; margin-top: 5px; }
+   .saldo-box {
       background: #1e293b;
       padding: 15px;
       border-radius: 12px;
@@ -33,15 +33,15 @@
       align-items: center;
       border: 1px solid #22c55e;
     }
-    .saldo-valor { font-size: 24px; font-weight: bold; color: #22c55e; }
-    .btn {
-      background: #38bdf8; color: #0f172a; border: none; 
+   .saldo-valor { font-size: 24px; font-weight: bold; color: #22c55e; }
+   .btn {
+      background: #38bdf8; color: #0f172a; border: none;
       padding: 12px 18px; border-radius: 10px; font-weight: bold; cursor: pointer;
     }
-    .btn-verde { background: #22c55e; color: white; }
-    .btn-vermelho { background: #ef4444; color: white; }
-    .btn-zap { background: #25D366; color: white; }
-    .btn-anunciar {
+   .btn-verde { background: #22c55e; color: white; }
+   .btn-vermelho { background: #ef4444; color: white; }
+   .btn-zap { background: #25D366; color: white; }
+   .btn-anunciar {
       background: #f59e0b;
       color: #0f172a;
       width: 100%;
@@ -49,25 +49,25 @@
       font-size: 18px;
       margin-bottom: 15px;
     }
-    .post {
+   .post {
       background: #1e293b;
       border-radius: 12px;
       margin-bottom: 15px;
       border: 1px solid #334155;
       overflow: hidden;
     }
-    .post-img, .post-video { width: 100%; max-height: 400px; object-fit: cover; }
-    .post-content { padding: 15px; }
-    .post-autor { font-weight: bold; color: #38bdf8; }
-    .post-texto { margin: 12px 0; white-space: pre-wrap; }
-    .post-actions {
+   .post-img,.post-video { width: 100%; max-height: 400px; object-fit: cover; }
+   .post-content { padding: 15px; }
+   .post-autor { font-weight: bold; color: #38bdf8; }
+   .post-texto { margin: 12px 0; white-space: pre-wrap; }
+   .post-actions {
       display: flex;
       gap: 20px;
       color: #94a3b8;
       font-size: 14px;
     }
-    .post-actions span { cursor: pointer; }
-    .btn-seguir {
+   .post-actions span { cursor: pointer; }
+   .btn-seguir {
       background: #22c55e;
       color: white;
       border: none;
@@ -77,8 +77,8 @@
       font-weight: bold;
       cursor: pointer;
     }
-    .btn-seguindo { background: #64748b; }
-    .nav-bottom {
+   .btn-seguindo { background: #64748b; }
+   .nav-bottom {
       position: fixed;
       bottom: 0;
       left: 0;
@@ -89,36 +89,41 @@
       padding: 12px 0;
       border-top: 1px solid #334155;
     }
-    .nav-item { text-align: center; color: #94a3b8; font-size: 12px; cursor: pointer; }
-    .nav-item.ativo { color: #f59e0b; }
-    .modal {
+   .nav-item { text-align: center; color: #94a3b8; font-size: 12px; cursor: pointer; }
+   .nav-item.ativo { color: #f59e0b; }
+   .modal {
       display: none; position: fixed; top: 0; left: 0;
       width: 100%; height: 100%; background: rgba(0,0,0,0.9);
       z-index: 1000; overflow-y: auto;
     }
-    .modal-content {
+   .modal-content {
       background: #1e293b; max-width: 500px;
       margin: 20px auto; padding: 25px; border-radius: 15px;
     }
-    .modal input, .modal textarea {
+   .modal input,.modal textarea {
       width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px;
       border: 2px solid #475569; background: #0f172a; color: white;
     }
-    .modal label { display: block; margin-top: 12px; color: #cbd5e1; font-weight: bold; }
-    .missao {
+   .modal input[type="file"] {
+      background: #0f172a;
+      border: 2px dashed #475569;
+      padding: 15px;
+    }
+   .modal label { display: block; margin-top: 12px; color: #cbd5e1; font-weight: bold; }
+   .missao {
       background: #0f172a; padding: 15px; border-radius: 10px;
       margin: 10px 0; display: flex; justify-content: space-between; align-items: center;
     }
-    .missao-completa { opacity: 0.5; border: 1px solid #22c55e; }
-    .pix-box {
+   .missao-completa { opacity: 0.5; border: 1px solid #22c55e; }
+   .pix-box {
       background: #0f172a; padding: 15px; border-radius: 10px;
       margin: 15px 0; border: 2px dashed #f59e0b; text-align: center;
     }
-    .pix-chave { font-size: 14px; word-break: break-all; color: #38bdf8; margin: 10px 0; }
+   .pix-chave { font-size: 14px; word-break: break-all; color: #38bdf8; margin: 10px 0; }
     #telaFeed, #telaMissoes, #telaCarteira, #painelAdm { display: none; }
     #telaFeed { display: block; }
-    .link-adm { position: fixed; bottom: 90px; right: 10px; color: #334155; font-size: 12px; cursor: pointer; }
-    .post-pendente {
+   .link-adm { position: fixed; bottom: 90px; right: 10px; color: #334155; font-size: 12px; cursor: pointer; }
+   .post-pendente {
       background: #0f172a; padding: 15px; border-radius: 10px;
       margin: 10px 0; border: 1px solid #f59e0b;
     }
@@ -181,7 +186,7 @@
     <h3 style="margin:20px 0;">Posts Pendentes</h3>
     <div id="listaPendentes"></div>
     <h3 style="margin:30px 0 15px 0;">Configurar Chave Pix</h3>
-    <input type="text" id="novaChavePix" placeholder="Digite sua chave Pix">
+    <input type="text" id="novaChavePix" placeholder="Digite sua chave Pix: CPF, email, celular">
     <button class="btn" onclick="salvarChavePix()">Salvar Chave Pix</button>
     <button class="btn btn-vermelho" onclick="sairAdm()" style="margin-top:30px;width:100%;">Sair do ADM</button>
   </div>
@@ -200,20 +205,27 @@
   <div class="modal" id="modalAnunciar">
     <div class="modal-content">
       <h2 style="color:#f59e0b;">Anunciar por R$ 10</h2>
-      <p style="color:#94a3b8;margin-bottom:15px;">Só foto ou vídeo. 50% da grana vai pros usuários que engajam.</p>
-      
+      <p style="color:#94a3b8;margin-bottom:15px;">50% da grana vai pros usuários que engajam.</p>
+
       <label>Nome/Empresa:</label>
       <input type="text" id="nomeAnunciante" placeholder="Ex: Pastelaria do Zé" maxlength="30">
-      
+
       <label>Legenda do anúncio:</label>
       <textarea id="textoAnuncio" placeholder="Descreva sua oferta..." maxlength="200"></textarea>
-      
-      <label>Link da Foto ou Vídeo:</label>
-      <input type="text" id="midiaAnuncio" placeholder="Cole link do Imgur, YouTube, etc">
+
+      <label>Foto ou Vídeo do anúncio:</label>
+      <input type="file" id="midiaArquivo" accept="image/*,video/*">
+      <p style="font-size:11px;color:#64748b;margin-top:-5px;">Clique e escolha da galeria</p>
+
+      <div id="previewMidia" style="display:none;margin:10px 0;">
+        <img id="previewImg" style="width:100%;border-radius:8px;display:none;">
+        <video id="previewVideo" style="width:100%;border-radius:8px;display:none;" controls></video>
+      </div>
 
       <div class="pix-box">
         <p style="font-weight:bold;color:#f59e0b;">PIX R$ 10,00</p>
         <p style="font-size:13px;">Chave: <span id="chavePix">11999999999</span></p>
+        <p style="font-size:11px;color:#ef4444;margin-top:8px;">⚠️ TROQUE NO PAINEL ADM!</p>
       </div>
 
       <button class="btn btn-zap" style="width:100%;" onclick="enviarWhatsApp()">PAGUEI - ENVIAR COMPROVANTE</button>
@@ -257,11 +269,41 @@
     };
     localStorage.setItem('anunciarUserId', usuario.id);
 
+    // PREVIEW DA IMAGEM/VÍDEO DA GALERIA
+    document.addEventListener('DOMContentLoaded', function() {
+      const inputArquivo = document.getElementById('midiaArquivo');
+      if (inputArquivo) {
+        inputArquivo.addEventListener('change', function(e) {
+          const arquivo = e.target.files[0];
+          if (!arquivo) return;
+
+          const previewDiv = document.getElementById('previewMidia');
+          const previewImg = document.getElementById('previewImg');
+          const previewVideo = document.getElementById('previewVideo');
+
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            previewDiv.style.display = 'block';
+            if (arquivo.type.startsWith('image/')) {
+              previewImg.src = event.target.result;
+              previewImg.style.display = 'block';
+              previewVideo.style.display = 'none';
+            } else if (arquivo.type.startsWith('video/')) {
+              previewVideo.src = event.target.result;
+              previewVideo.style.display = 'block';
+              previewImg.style.display = 'none';
+            }
+          };
+          reader.readAsDataURL(arquivo);
+        });
+      }
+    });
+
     // SISTEMA DE CONVITE
     window.onload = function() {
       const urlParams = new URLSearchParams(window.location.search);
       const ref = urlParams.get('ref');
-      if (ref && !usuario.indicadoPor && ref !== usuario.id) {
+      if (ref &&!usuario.indicadoPor && ref!== usuario.id) {
         usuario.indicadoPor = ref;
         localStorage.setItem('anunciarIndicadoPor', ref);
         let indicador = JSON.parse(localStorage.getItem('user_' + ref) || '{}');
@@ -277,7 +319,7 @@
 
     function verificarLoginDiario() {
       const hoje = new Date().toLocaleDateString('pt-BR');
-      if (usuario.ultimoLogin !== hoje) {
+      if (usuario.ultimoLogin!== hoje) {
         const ontem = new Date();
         ontem.setDate(ontem.getDate() - 1);
         if (usuario.ultimoLogin === ontem.toLocaleDateString('pt-BR')) {
@@ -303,13 +345,13 @@
       pendentes = JSON.parse(localStorage.getItem('anunciarPendentes') || '[]');
       const chaveSalva = localStorage.getItem('anunciarChavePix');
       if (chaveSalva) document.getElementById('chavePix').innerText = chaveSalva;
-      
+
       if (posts.length === 0) {
         posts = [
-          {id:"1",nome:"Pastelaria do Zé",texto:"Pastel + Caldo R$ 8\nChama no Zap!",midia:"https://via.placeholder.com/400x400/f59e0b/0f172a?text=PASTEL",curtidas:47,comentarios:8,seguidores:12,curtidoPor:[],empresaId:"pastelariadoze"}
+          {id:"1",nome:"Pastelaria do Zé",texto:"Pastel + Caldo R$ 8\nChama no Zap!",midia:"https://via.placeholder.com/400x400/f59e0b/0f172a?text=PASTEL",tipo:"imagem",curtidas:47,comentarios:8,seguidores:12,curtidoPor:[],empresaId:"pastelariadoze"}
         ];
       }
-      
+
       atualizarSaldoTela();
       renderizarFeed();
     }
@@ -340,10 +382,10 @@
       document.getElementById('telaCarteira').style.display = 'none';
       document.getElementById('painelAdm').style.display = 'none';
       document.getElementById(id).style.display = 'block';
-      
+
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('ativo'));
       event.currentTarget.classList.add('ativo');
-      
+
       if (id === 'telaMissoes') renderizarMissoes();
       if (id === 'telaCarteira') renderizarHistorico();
     }
@@ -351,29 +393,28 @@
     function renderizarFeed() {
       const feed = document.getElementById('feed');
       feed.innerHTML = '';
-      
+
       const postsOrdenados = posts.slice().sort((a, b) => {
-        const segueA = usuario.seguindo.includes(a.empresaId) ? 1 : 0;
-        const segueB = usuario.seguindo.includes(b.empresaId) ? 1 : 0;
+        const segueA = usuario.seguindo.includes(a.empresaId)? 1 : 0;
+        const segueB = usuario.seguindo.includes(b.empresaId)? 1 : 0;
         return segueB - segueA;
       });
 
       postsOrdenados.reverse().forEach(post => {
         const div = document.createElement('div');
         div.className = 'post';
-        const isVideo = post.midia.includes('youtube') || post.midia.includes('mp4');
         const jaSegue = usuario.seguindo.includes(post.empresaId);
-        
+
         div.innerHTML = `
-          ${isVideo ? 
-            `<iframe class="post-video" src="${post.midia}" frameborder="0"></iframe>` : 
+          ${post.tipo === 'video'?
+            `<video class="post-video" src="${post.midia}" controls></video>` :
             `<img src="${post.midia}" class="post-img" onerror="this.src='https://via.placeholder.com/400x400/1e293b/f59e0b?text=ANÚNCIO'">`
           }
           <div class="post-content">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
               <div class="post-autor">${post.nome}</div>
-              <button onclick="seguirEmpresa('${post.empresaId}')" class="btn-seguir ${jaSegue ? 'btn-seguindo' : ''}">
-                ${jaSegue ? 'Seguindo ✓' : '+ Seguir'}
+              <button onclick="seguirEmpresa('${post.empresaId}')" class="btn-seguir ${jaSegue? 'btn-seguindo' : ''}">
+                ${jaSegue? 'Seguindo ✓' : '+ Seguir'}
               </button>
             </div>
             <div class="post-texto">${post.texto}</div>
@@ -390,7 +431,7 @@
 
     function curtir(id) {
       const post = posts.find(p => p.id === id);
-      if (post && !post.curtidoPor.includes(usuario.id)) {
+      if (post &&!post.curtidoPor.includes(usuario.id)) {
         post.curtidas++;
         post.curtidoPor.push(usuario.id);
         usuario.curtidasHoje++;
@@ -404,7 +445,7 @@
     function seguirEmpresa(empresaId) {
       const index = usuario.seguindo.indexOf(empresaId);
       const empresaPosts = posts.filter(p => p.empresaId === empresaId);
-      
+
       if (index === -1) {
         usuario.seguindo.push(empresaId);
         empresaPosts.forEach(p => p.seguidores = (p.seguidores || 0) + 1);
@@ -413,7 +454,7 @@
         usuario.seguindo.splice(index, 1);
         empresaPosts.forEach(p => p.seguidores = Math.max(0, (p.seguidores || 1) - 1));
       }
-      
+
       localStorage.setItem('anunciarPosts', JSON.stringify(posts));
       salvarUsuario();
       renderizarFeed();
@@ -428,14 +469,14 @@
         if (m.tipo === 'curtir') progresso = usuario.curtidasHoje;
         if (m.tipo === 'seguir') progresso = usuario.seguindo.length;
         if (m.tipo === 'login') progresso = usuario.diasSeguidos;
-        
+
         const div = document.createElement('div');
-        div.className = 'missao' + (feita ? ' missao-completa' : '');
+        div.className = 'missao' + (feita? ' missao-completa' : '');
         div.innerHTML = `
           <div>
             <div style="font-weight:bold;">${m.nome}</div>
-            <div style="font-size:13px;color:#94a3b8;">${feita ? 'Completa!' : `Progresso: ${progresso}/${m.meta}`}</div>
-            ${m.desc ? `<div style="font-size:11px;color:#64748b;margin-top:4px;">${m.desc}</div>` : ''}
+            <div style="font-size:13px;color:#94a3b8;">${feita? 'Completa!' : `Progresso: ${progresso}/${m.meta}`}</div>
+            ${m.desc? `<div style="font-size:11px;color:#64748b;margin-top:4px;">${m.desc}</div>` : ''}
           </div>
           <div style="color:#22c55e;font-weight:bold;">+R$ ${m.recompensa.toFixed(2)}</div>
         `;
@@ -445,12 +486,12 @@
 
     function verificarMissao(tipo) {
       missoes.forEach(m => {
-        if (m.tipo === tipo && !usuario.missoesFeitas.includes(m.id)) {
+        if (m.tipo === tipo &&!usuario.missoesFeitas.includes(m.id)) {
           let progresso = 0;
           if (tipo === 'curtir') progresso = usuario.curtidasHoje;
           if (tipo === 'seguir') progresso = usuario.seguindo.length;
           if (tipo === 'login') progresso = usuario.diasSeguidos;
-          
+
           if (progresso >= m.meta) {
             if (adicionarSaldo(m.recompensa, `Missão: ${m.nome}`, m.tipo)) {
               usuario.missoesFeitas.push(m.id);
@@ -464,17 +505,16 @@
     function validarConviteAtivo(idConvidado) {
       const convidado = JSON.parse(localStorage.getItem('user_' + idConvidado) || '{}');
       if (!convidado.indicadoPor || convidado.convitePago) return;
-      
+
       const curtidas = convidado.curtidasHoje || 0;
       const convidou = convidado.convidados?.length || 0;
       const indicadorId = convidado.indicadoPor;
-      
+
       if (curtidas >= 3 && convidou >= 1) {
         let indicador = JSON.parse(localStorage.getItem('user_' + indicadorId) || '{}');
         if (!indicador.convidadosPagos) indicador.convidadosPagos = [];
-        
+
         if (!indicador.convidadosPagos.includes(idConvidado)) {
-          // Paga pro indicador se tiver limite
           const ganhoConvite = indicador.historico?.filter(h => h.motivo.includes('Convide')).reduce((t, h) => t + h.valor, 0) || 0;
           if (ganhoConvite < LIMITE_GANHO_CONVITE && fundoUsuarios >= 1.00) {
             indicador.saldo = (indicador.saldo || 0) + 1.00;
@@ -484,7 +524,7 @@
             fundoUsuarios -= 1.00;
             localStorage.setItem('anunciarFundo', fundoUsuarios);
             localStorage.setItem('user_' + indicadorId, JSON.stringify(indicador));
-            
+
             convidado.convitePago = true;
             localStorage.setItem('user_' + idConvidado, JSON.stringify(convidado));
           }
@@ -494,7 +534,7 @@
 
     function adicionarSaldo(valor, motivo, tipoMissao) {
       if (fundoUsuarios < valor) return false;
-      
+
       const hoje = new Date().toLocaleDateString('pt-BR');
       const ganhoHoje = usuario.historico.filter(h => h.data === hoje).reduce((t, h) => t + h.valor, 0);
       if (ganhoHoje + valor > LIMITE_GANHO_TOTAL_DIA) return false;
@@ -552,30 +592,43 @@
     }
     function fecharModalAnunciar() {
       document.getElementById('modalAnunciar').style.display = 'none';
+      document.getElementById('nomeAnunciante').value = '';
+      document.getElementById('textoAnuncio').value = '';
+      document.getElementById('midiaArquivo').value = '';
+      document.getElementById('previewMidia').style.display = 'none';
     }
 
     function enviarWhatsApp() {
       const nome = document.getElementById('nomeAnunciante').value.trim();
       const texto = document.getElementById('textoAnuncio').value.trim();
-      const midia = document.getElementById('midiaAnuncio').value.trim();
+      const arquivo = document.getElementById('midiaArquivo').files[0];
 
-      if (!nome || !texto || !midia) {
-        alert("Preenche tudo: nome, legenda e link da foto/vídeo!");
+      if (!nome ||!texto ||!arquivo) {
+        alert("Preenche tudo: nome, legenda e escolha foto/vídeo da galeria!");
         return;
       }
 
-      const id = Date.now().toString();
-      pendentes.push({ id, nome, texto, midia, data: new Date().toLocaleDateString('pt-BR') });
-      localStorage.setItem('anunciarPendentes', JSON.stringify(pendentes));
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const midiaBase64 = event.target.result;
+        const id = Date.now().toString();
 
-      const msg = `Paguei R$ 10 pra anunciar!%0A%0ANome: ${nome}%0ALegenda: ${texto}%0AMídia: ${midia}%0A%0ASegue comprovante:`;
-      window.open(`https://wa.me/${SEU_WHATSAPP}?text=${msg}`, '_blank');
-      fecharModalAnunciar();
-      alert("Pendência criada! Assim que confirmar o Pix, seu post entra no ar.");
-      
-      document.getElementById('nomeAnunciante').value = '';
-      document.getElementById('textoAnuncio').value = '';
-      document.getElementById('midiaAnuncio').value = '';
+        pendentes.push({
+          id,
+          nome,
+          texto,
+          midia: midiaBase64,
+          tipo: arquivo.type.startsWith('video/')? 'video' : 'imagem',
+          data: new Date().toLocaleDateString('pt-BR')
+        });
+        localStorage.setItem('anunciarPendentes', JSON.stringify(pendentes));
+
+        const msg = `Paguei R$ 10 pra anunciar!%0A%0ANome: ${nome}%0ALegenda: ${texto}%0A%0ASegue comprovante + print da imagem:`;
+        window.open(`https://wa.me/${SEU_WHATSAPP}?text=${msg}`, '_blank');
+        fecharModalAnunciar();
+        alert("Pendência criada! Manda o comprovante + print da imagem no WhatsApp.");
+      };
+      reader.readAsDataURL(arquivo);
     }
 
     function abrirAdm() {
@@ -587,7 +640,7 @@
         document.getElementById('painelAdm').style.display = 'block';
         listarPendentes();
         atualizarSaldoTela();
-      } else if (senha !== null) {
+      } else if (senha!== null) {
         alert("Senha errada!");
       }
     }
@@ -607,10 +660,14 @@
       pendentes.forEach(p => {
         const div = document.createElement('div');
         div.className = 'post-pendente';
+        const midiaHTML = p.tipo === 'video'
+         ? `<video src="${p.midia}" style="width:100%;border-radius:8px;margin:10px 0;" controls></video>`
+          : `<img src="${p.midia}" style="width:100%;border-radius:8px;margin:10px 0;">`;
+
         div.innerHTML = `
           <p><strong>${p.nome}</strong></p>
           <p style="margin:10px 0;color:#cbd5e1;">${p.texto}</p>
-          <img src="${p.midia}" style="width:100%;border-radius:8px;margin:10px 0;" onerror="this.style.display='none'">
+          ${midiaHTML}
           <p style="font-size:12px;color:#64748b;">${p.data}</p>
           <button class="btn btn-verde" onclick="aprovarPost('${p.id}')" style="margin-top:10px;">Aprovar Post</button>
           <button class="btn btn-vermelho" onclick="rejeitarPost('${p.id}')">Rejeitar</button>
@@ -621,7 +678,7 @@
 
     function aprovarPost(id) {
       const index = pendentes.findIndex(p => p.id === id);
-      if (index !== -1) {
+      if (index!== -1) {
         const postAprovado = pendentes[index];
         postAprovado.curtidas = 0;
         postAprovado.comentarios = 0;
@@ -630,7 +687,7 @@
         postAprovado.empresaId = postAprovado.nome.replace(/\s/g, '').toLowerCase() + Date.now();
         posts.push(postAprovado);
         pendentes.splice(index, 1);
-        
+
         fundoUsuarios += VALOR_POST * PORCENTAGEM_USUARIO;
         localStorage.setItem('anunciarFundo', fundoUsuarios);
         localStorage.setItem('anunciarPosts', JSON.stringify(posts));
@@ -643,23 +700,4 @@
     }
 
     function rejeitarPost(id) {
-      if (confirm("Tem certeza? A pessoa já pagou.")) {
-        pendentes = pendentes.filter(p => p.id !== id);
-        localStorage.setItem('anunciarPendentes', JSON.stringify(pendentes));
-        listarPendentes();
-      }
-    }
-
-    function salvarChavePix() {
-      const nova = document.getElementById('novaChavePix').value.trim();
-      if (nova) {
-        localStorage.setItem('anunciarChavePix', nova);
-        document.getElementById('chavePix').innerText = nova;
-        alert("Chave Pix atualizada!");
-      }
-    }
-
-    carregarDados();
-  </script>
-</body>
-</html>
+      if (confirm("
