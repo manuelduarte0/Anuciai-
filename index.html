@@ -120,13 +120,28 @@
       margin: 15px 0; border: 2px dashed #f59e0b; text-align: center;
     }
 .pix-chave { font-size: 14px; word-break: break-all; color: #38bdf8; margin: 10px 0; }
-    #telaFeed, #telaMissoes, #telaCarteira, #painelAdm { display: none; }
+    #telaFeed, #telaMissoes, #telaCarteira, #telaEntrar, #painelAdm { display: none; }
     #telaFeed { display: block; }
 .link-adm { position: fixed; bottom: 90px; right: 10px; color: #334155; font-size: 12px; cursor: pointer; }
 .post-pendente {
       background: #0f172a; padding: 15px; border-radius: 10px;
       margin: 10px 0; border: 1px solid #f59e0b;
     }
+.input {
+  width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px;
+  border: 2px solid #475569; background: #0f172a; color: white;
+}
+.seguidor-item {
+  padding: 12px; border-bottom: 1px solid #334155;
+  display: flex; align-items: center; gap: 12px;
+}
+.seguidor-icone {
+  width: 36px; height: 36px; background: #334155;
+  border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 18px;
+}
+.seguidores-clicavel { cursor: pointer; }
+.seguidores-clicavel:hover { color: #38bdf8; }
   </style>
 </head>
 <body>
@@ -171,6 +186,16 @@
     <div id="historicoGanhos"></div>
   </div>
 
+  <div id="telaEntrar" class="container">
+    <div class="header"><h1>ENTRAR 👤</h1><p>Faça login pra curtir e seguir</p></div>
+    <div class="saldo-box" style="flex-direction:column;gap:15px;">
+      <input type="text" id="loginNome" placeholder="Seu nome completo" class="input">
+      <input type="email" id="loginEmail" placeholder="Seu melhor e-mail" class="input">
+      <button class="btn btn-verde" style="width:100%;" onclick="fazerLogin()">ENTRAR</button>
+      <div id="loginInfo" style="font-size:14px;color:#22c55e;font-weight:600;"></div>
+    </div>
+  </div>
+
   <div id="painelAdm" class="container">
     <div class="header"><h1>PAINEL ADM 🔐</h1></div>
     <div class="saldo-box">
@@ -186,8 +211,7 @@
     <button class="btn" onclick="salvarChavePix()">Salvar Chave Pix</button>
     <button class="btn btn-vermelho" onclick="sairAdm()" style="margin-top:30px;width:100%;">Sair do ADM</button>
   </div>
-
-  <div class="nav-bottom">
+    <div class="nav-bottom">
     <div class="nav-item ativo" onclick="abrirTela('telaFeed', this)">🏠<br>Feed</div>
     <div class="nav-item" onclick="abrirTela('telaMissoes', this)">🎯<br>Missões</div>
     <div class="nav-item" onclick="abrirTela('telaCarteira', this)">💰<br>Carteira</div>
@@ -228,7 +252,14 @@
     </div>
   </div>
 
-  <script>
+  <div class="modal" id="modalSeguidores">
+    <div class="modal-content">
+      <h2 id="tituloSeguidores" style="color:#f59e0b;margin-bottom:15px;">Seguidores</h2>
+      <div id="listaSeguidores"></div>
+      <button class="btn btn-vermelho" style="width:100%;margin-top:15px;" onclick="fecharModal('modalSeguidores')">Fechar</button>
+    </div>
+  </div>
+    <script>
     const SENHA_ADM = "anunciar123";
     const SEU_WHATSAPP = "5585991159693";
     const VALOR_POST = 10;
@@ -250,6 +281,9 @@
 
     let usuario = {
       id: localStorage.getItem('anunciarUserId') || Date.now().toString(),
+      nome: localStorage.getItem('anunciarNome') || '',
+      email: localStorage.getItem('anunciarEmail') || '',
+      logado: localStorage.getItem('anunciarLogado') === 'true',
       saldo: parseFloat(localStorage.getItem('anunciarSaldo') || 0),
       missoesFeitas: JSON.parse(localStorage.getItem('anunciarMissoes') || '[]'),
       historico: JSON.parse(localStorage.getItem('anunciarHistorico') || '[]'),
@@ -307,7 +341,45 @@
       }
       verificarLoginDiario();
       carregarDados();
+      checarLogin();
     };
+
+    function checarLogin() {
+      if (usuario.logado) {
+        document.getElementById('tab-entrar').innerHTML = '✅<br>' + usuario.nome.split(' ')[0];
+        document.getElementById('loginInfo').innerText = 'Logado como ' + usuario.nome;
+      }
+    }
+
+    function fazerLogin() {
+      const nome = document.getElementById('loginNome').value.trim();
+      const email = document.getElementById('loginEmail').value.trim();
+      
+      if (!nome ||!email) {
+        alert('Preenche nome e email!');
+        return;
+      }
+      
+      usuario.nome = nome;
+      usuario.email = email;
+      usuario.logado = true;
+      localStorage.setItem('anunciarNome', nome);
+      localStorage.setItem('anunciarEmail', email);
+      localStorage.setItem('anunciarLogado', 'true');
+      salvarUsuario();
+      checarLogin();
+      document.getElementById('loginInfo').innerText = 'Login feito! Agora você pode curtir e seguir.';
+      setTimeout(() => abrirTela('telaFeed', document.querySelector('.nav-item')), 1500);
+    }
+
+    function exigirLogin() {
+      if (!usuario.logado) {
+        alert('Faz login primeiro na aba Entrar 👤');
+        abrirTela('telaEntrar', document.getElementById('tab-entrar'));
+        return false;
+      }
+      return true;
+    }
 
     function verificarLoginDiario() {
       const hoje = new Date().toLocaleDateString('pt-BR');
@@ -327,6 +399,7 @@
     }
 
     function copiarLinkConvite() {
+      if (!exigirLogin()) return;
       const link = `${window.location.origin}${window.location.pathname}?ref=${usuario.id}`;
       navigator.clipboard.writeText(link);
       alert('Link copiado! Manda pros amigos:\n\n' + link);
@@ -372,6 +445,7 @@
       document.getElementById('telaFeed').style.display = 'none';
       document.getElementById('telaMissoes').style.display = 'none';
       document.getElementById('telaCarteira').style.display = 'none';
+      document.getElementById('telaEntrar').style.display = 'none';
       document.getElementById('painelAdm').style.display = 'none';
       document.getElementById(id).style.display = 'block';
 
@@ -412,7 +486,7 @@
             <div class="post-texto">${post.texto}</div>
             <div class="post-actions">
               <span onclick="curtir('${post.id}')">❤️ ${post.curtidas}</span>
-              <span>👥 ${post.seguidores || 0} seguidores</span>
+              <span class="seguidores-clicavel" onclick="verSeguidores('${post.empresaId}', '${post.nome}')">👥 ${post.seguidores || 0} seguidores</span>
               <span style="margin-left:auto;color:#f59e0b;font-size:11px;">PATROCINADO</span>
             </div>
           </div>
@@ -422,6 +496,7 @@
     }
 
     function curtir(id) {
+      if (!exigirLogin()) return;
       const post = posts.find(p => p.id === id);
       if (post &&!post.curtidoPor.includes(usuario.id)) {
         post.curtidas++;
@@ -435,6 +510,7 @@
     }
 
     function seguirEmpresa(empresaId) {
+      if (!exigirLogin()) return;
       const index = usuario.seguindo.indexOf(empresaId);
       const empresaPosts = posts.filter(p => p.empresaId === empresaId);
 
@@ -450,6 +526,46 @@
       localStorage.setItem('anunciarPosts', JSON.stringify(posts));
       salvarUsuario();
       renderizarFeed();
+    }
+
+    function verSeguidores(empresaId, nomeEmpresa) {
+      const todosUsuarios = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('user_')) {
+          const u = JSON.parse(localStorage.getItem(key));
+          if (u.seguindo && u.seguindo.includes(empresaId)) {
+            todosUsuarios.push(u);
+          }
+        }
+      }
+      
+      document.getElementById('tituloSeguidores').innerText = `Seguidores de ${nomeEmpresa}`;
+      const lista = document.getElementById('listaSeguidores');
+      lista.innerHTML = '';
+      
+      if (todosUsuarios.length === 0) {
+        lista.innerHTML = '<p style="color:#94a3b8;">Ninguém segue ainda. Seja o primeiro!</p>';
+      } else {
+        todosUsuarios.forEach(u => {
+          const div = document.createElement('div');
+          div.className = 'seguidor-item';
+          div.innerHTML = `
+            <div class="seguidor-icone">👤</div>
+            <div>
+              <div style="font-weight:bold;">${u.nome || 'Usuário'}</div>
+              <div style="font-size:12px;color:#64748b;">${u.email || ''}</div>
+            </div>
+          `;
+          lista.appendChild(div);
+        });
+      }
+      
+      document.getElementById('modalSeguidores').style.display = 'block';
+    }
+
+    function fecharModal(id) {
+      document.getElementById(id).style.display = 'none';
     }
 
     function renderizarMissoes() {
@@ -566,6 +682,7 @@
     }
 
     function sacarDinheiro() {
+      if (!exigirLogin()) return;
       if (usuario.saldo < SAQUE_MINIMO) {
         alert(`Saque mínimo R$ ${SAQUE_MINIMO.toFixed(2)}. Continue fazendo missões!`);
         return;
@@ -629,6 +746,7 @@
         document.getElementById('telaFeed').style.display = 'none';
         document.getElementById('telaMissoes').style.display = 'none';
         document.getElementById('telaCarteira').style.display = 'none';
+        document.getElementById('telaEntrar').style.display = 'none';
         document.getElementById('painelAdm').style.display = 'block';
         listarPendentes();
         atualizarSaldoTela();
@@ -653,7 +771,7 @@
         const div = document.createElement('div');
         div.className = 'post-pendente';
         const midiaHTML = p.tipo === 'video'
-  ? `<video src="${p.midia}" style="width:100%;border-radius:8px;margin:10px 0;" controls></video>`
+         ? `<video src="${p.midia}" style="width:100%;border-radius:8px;margin:10px 0;" controls></video>`
           : `<img src="${p.midia}" style="width:100%;border-radius:8px;margin:10px 0;">`;
 
         div.innerHTML = `
@@ -668,7 +786,7 @@
       });
     }
 
-        function aprovarPost(id) {
+    function aprovarPost(id) {
       const index = pendentes.findIndex(p => p.id === id);
       if (index!== -1) {
         const postAprovado = pendentes[index];
