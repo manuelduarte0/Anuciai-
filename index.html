@@ -159,6 +159,7 @@
           <div style="position:absolute;bottom:0;right:0;width:20px;height:20px;background:#22c55e;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #0f172a;">
             <span style="color:white;font-size:14px;font-weight:bold;">+</span>
           </div>
+        </div>
         <div style="font-size:11px;color:#94a3b8;margin-top:4px;">Seu story</div>
       </div>
       <div id="listaStories"></div>
@@ -308,7 +309,11 @@
       </div>
     </div>
   </div>
-        localStorage.setItem('user_' + usuario.id, JSON.stringify(usuario));
+
+  <script>
+    const SENHA_ADM = "anunciar123";
+    const SEU_WHATSAPP = "5585991159693";
+    const VALOR_POST = 10;
       atualizarSaldoTela();
     }
 
