@@ -188,11 +188,37 @@
 
   <div id="telaEntrar" class="container">
     <div class="header"><h1>ENTRAR 👤</h1><p>Faça login pra curtir e seguir</p></div>
-    <div class="saldo-box" style="flex-direction:column;gap:15px;">
+    <div id="telaEntrar" class="container">
+    <div class="header"><h1 id="tituloEntrar">ENTRAR 👤</h1><p id="subtituloEntrar">Faça login pra curtir e seguir</p></div>
+    
+    <!-- FORM DE LOGIN -->
+    <div id="formLogin" class="saldo-box" style="flex-direction:column;gap:15px;">
       <input type="text" id="loginNome" placeholder="Seu nome completo" class="input">
       <input type="email" id="loginEmail" placeholder="Seu melhor e-mail" class="input">
       <button class="btn btn-verde" style="width:100%;" onclick="fazerLogin()">ENTRAR</button>
       <div id="loginInfo" style="font-size:14px;color:#22c55e;font-weight:600;"></div>
+    </div>
+
+    <!-- PERFIL DO USUÁRIO -->
+    <div id="perfilUsuario" style="display:none;">
+      <div class="saldo-box" style="flex-direction:column;gap:15px;text-align:center;">
+        <div style="width:80px;height:80px;background:#334155;border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:40px;">👤</div>
+        <div style="font-size:20px;font-weight:bold;" id="perfilNome"></div>
+        <div style="font-size:14px;color:#94a3b8;" id="perfilEmail"></div>
+        
+        <div style="display:flex;justify-content:space-around;width:100%;margin-top:10px;">
+          <div>
+            <div style="font-size:22px;font-weight:bold;color:#22c55e;" id="perfilSeguindo">0</div>
+            <div style="font-size:12px;color:#94a3b8;">Seguindo</div>
+          </div>
+          <div>
+            <div style="font-size:22px;font-weight:bold;color:#f59e0b;" id="perfilCurtidas">0</div>
+            <div style="font-size:12px;color:#94a3b8;">Curtidas</div>
+          </div>
+        </div>
+        
+        <button class="btn btn-vermelho" style="width:100%;margin-top:15px;" onclick="sairConta()">SAIR DA CONTA</button>
+      </div>
     </div>
   </div>
 
@@ -344,22 +370,41 @@
       checarLogin();
     };
 
-    function checarLogin() {
+      function checarLogin() {
+      const formLogin = document.getElementById('formLogin');
+      const perfilUsuario = document.getElementById('perfilUsuario');
+      const tabEntrar = document.getElementById('tab-entrar');
+
       if (usuario.logado) {
-        document.getElementById('tab-entrar').innerHTML = '✅<br>' + usuario.nome.split(' ')[0];
-        document.getElementById('loginInfo').innerText = 'Logado como ' + usuario.nome;
+        document.getElementById('tituloEntrar').innerText = 'MEU PERFIL 👤';
+        document.getElementById('subtituloEntrar').innerText = 'Suas estatísticas';
+        formLogin.style.display = 'none';
+        perfilUsuario.style.display = 'block';
+
+        document.getElementById('perfilNome').innerText = usuario.nome;
+        document.getElementById('perfilEmail').innerText = usuario.email;
+        document.getElementById('perfilSeguindo').innerText = usuario.seguindo.length;
+        document.getElementById('perfilCurtidas').innerText = usuario.curtidasHoje;
+
+        tabEntrar.innerHTML = '✅<br>' + usuario.nome.split(' ')[0];
+      } else {
+        document.getElementById('tituloEntrar').innerText = 'ENTRAR 👤';
+        document.getElementById('subtituloEntrar').innerText = 'Faça login pra curtir e seguir';
+        formLogin.style.display = 'flex';
+        perfilUsuario.style.display = 'none';
+        tabEntrar.innerHTML = '👤<br>Entrar';
       }
     }
 
     function fazerLogin() {
       const nome = document.getElementById('loginNome').value.trim();
       const email = document.getElementById('loginEmail').value.trim();
-      
+
       if (!nome ||!email) {
         alert('Preenche nome e email!');
         return;
       }
-      
+
       usuario.nome = nome;
       usuario.email = email;
       usuario.logado = true;
@@ -368,8 +413,18 @@
       localStorage.setItem('anunciarLogado', 'true');
       salvarUsuario();
       checarLogin();
-      document.getElementById('loginInfo').innerText = 'Login feito! Agora você pode curtir e seguir.';
-      setTimeout(() => abrirTela('telaFeed', document.querySelector('.nav-item')), 1500);
+    }
+
+    function sairConta() {
+      if (confirm('Tem certeza que quer sair?')) {
+        usuario.logado = false;
+        localStorage.setItem('anunciarLogado', 'false');
+        document.getElementById('loginNome').value = '';
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginInfo').innerText = '';
+        checarLogin();
+        abrirTela('telaFeed', document.querySelector('.nav-item'));
+      }
     }
 
     function exigirLogin() {
