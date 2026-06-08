@@ -19,8 +19,10 @@
       border-radius: 15px;
       text-align: center;
       margin-bottom: 15px;
+      box-shadow: 0 5px 20px rgba(245, 158, 11, 0.3);
     }
     .header h1 { font-size: 26px; color: #0f172a; }
+    .header p { color: #0f172a; font-weight: 600; margin-top: 5px; }
     .saldo-box {
       background: #1e293b;
       padding: 15px;
@@ -37,6 +39,8 @@
       padding: 12px 18px; border-radius: 10px; font-weight: bold; cursor: pointer;
     }
     .btn-verde { background: #22c55e; color: white; }
+    .btn-vermelho { background: #ef4444; color: white; }
+    .btn-zap { background: #25D366; color: white; }
     .btn-anunciar {
       background: #f59e0b;
       color: #0f172a;
@@ -54,14 +58,26 @@
     }
     .post-img, .post-video { width: 100%; max-height: 400px; object-fit: cover; }
     .post-content { padding: 15px; }
-    .post-autor { font-weight: bold; color: #38bdf8; margin-bottom: 8px; }
-    .post-texto { margin-bottom: 12px; }
+    .post-autor { font-weight: bold; color: #38bdf8; }
+    .post-texto { margin: 12px 0; white-space: pre-wrap; }
     .post-actions {
       display: flex;
       gap: 20px;
       color: #94a3b8;
+      font-size: 14px;
     }
     .post-actions span { cursor: pointer; }
+    .btn-seguir {
+      background: #22c55e;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .btn-seguindo { background: #64748b; }
     .nav-bottom {
       position: fixed;
       bottom: 0;
@@ -88,13 +104,24 @@
       width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px;
       border: 2px solid #475569; background: #0f172a; color: white;
     }
+    .modal label { display: block; margin-top: 12px; color: #cbd5e1; font-weight: bold; }
     .missao {
       background: #0f172a; padding: 15px; border-radius: 10px;
       margin: 10px 0; display: flex; justify-content: space-between; align-items: center;
     }
     .missao-completa { opacity: 0.5; border: 1px solid #22c55e; }
-    #telaFeed, #telaMissoes, #telaCarteira { display: none; }
+    .pix-box {
+      background: #0f172a; padding: 15px; border-radius: 10px;
+      margin: 15px 0; border: 2px dashed #f59e0b; text-align: center;
+    }
+    .pix-chave { font-size: 14px; word-break: break-all; color: #38bdf8; margin: 10px 0; }
+    #telaFeed, #telaMissoes, #telaCarteira, #painelAdm { display: none; }
     #telaFeed { display: block; }
+    .link-adm { position: fixed; bottom: 90px; right: 10px; color: #334155; font-size: 12px; cursor: pointer; }
+    .post-pendente {
+      background: #0f172a; padding: 15px; border-radius: 10px;
+      margin: 10px 0; border: 1px solid #f59e0b;
+    }
   </style>
 </head>
 <body>
@@ -123,6 +150,9 @@
   <!-- TELA MISSOES -->
   <div id="telaMissoes" class="container">
     <div class="header"><h1>MISSÕES 💸</h1><p>Ganhe dinheiro fácil</p></div>
+    <button class="btn btn-verde" style="width:100%;margin-bottom:15px;" onclick="copiarLinkConvite()">
+      📲 COPIAR MEU LINK DE CONVITE
+    </button>
     <div id="listaMissoes"></div>
   </div>
 
@@ -139,6 +169,23 @@
     <div id="historicoGanhos"></div>
   </div>
 
+  <!-- PAINEL ADM -->
+  <div id="painelAdm" class="container">
+    <div class="header"><h1>PAINEL ADM 🔐</h1></div>
+    <div class="saldo-box">
+      <div>
+        <div style="font-size:13px;color:#94a3b8;">Fundo dos Usuários</div>
+        <div class="saldo-valor">R$ <span id="fundoTotal">0,00</span></div>
+      </div>
+    </div>
+    <h3 style="margin:20px 0;">Posts Pendentes</h3>
+    <div id="listaPendentes"></div>
+    <h3 style="margin:30px 0 15px 0;">Configurar Chave Pix</h3>
+    <input type="text" id="novaChavePix" placeholder="Digite sua chave Pix">
+    <button class="btn" onclick="salvarChavePix()">Salvar Chave Pix</button>
+    <button class="btn btn-vermelho" onclick="sairAdm()" style="margin-top:30px;width:100%;">Sair do ADM</button>
+  </div>
+
   <!-- NAV BOTTOM -->
   <div class="nav-bottom">
     <div class="nav-item ativo" onclick="abrirTela('telaFeed')">🏠<br>Feed</div>
@@ -146,6 +193,8 @@
     <div class="nav-item" onclick="abrirTela('telaCarteira')">💰<br>Carteira</div>
     <div class="nav-item" onclick="abrirAdm()">🔐<br>ADM</div>
   </div>
+
+  <div class="link-adm" onclick="abrirAdm()">ADM</div>
 
   <!-- MODAL ANUNCIAR -->
   <div class="modal" id="modalAnunciar">
@@ -162,55 +211,134 @@
       <label>Link da Foto ou Vídeo:</label>
       <input type="text" id="midiaAnuncio" placeholder="Cole link do Imgur, YouTube, etc">
 
-      <div style="background:#0f172a;padding:15px;border-radius:10px;margin:15px 0;border:2px dashed #f59e0b;text-align:center;">
+      <div class="pix-box">
         <p style="font-weight:bold;color:#f59e0b;">PIX R$ 10,00</p>
         <p style="font-size:13px;">Chave: <span id="chavePix">11999999999</span></p>
       </div>
 
-      <button class="btn" style="background:#25D366;width:100%;" onclick="enviarWhatsApp()">PAGUEI - ENVIAR COMPROVANTE</button>
-      <button class="btn" style="background:#ef4444;width:100%;margin-top:10px;" onclick="fecharModalAnunciar()">Cancelar</button>
+      <button class="btn btn-zap" style="width:100%;" onclick="enviarWhatsApp()">PAGUEI - ENVIAR COMPROVANTE</button>
+      <button class="btn btn-vermelho" style="width:100%;margin-top:10px;" onclick="fecharModalAnunciar()">Cancelar</button>
     </div>
   </div>
 
   <script>
-    const SEU_WHATSAPP = "5511999999999";
+    // CONFIGURAÇÕES - TROCA AQUI
+    const SENHA_ADM = "anunciar123"; // TROCA ESSA SENHA!
+    const SEU_WHATSAPP = "5511999999999"; // COLOCA SEU NÚMERO COM 55
     const VALOR_POST = 10;
-    const PORCENTAGEM_USUARIO = 0.5; // 50%
+    const PORCENTAGEM_USUARIO = 0.5;
     const SAQUE_MINIMO = 20;
+    const LIMITE_GANHO_CONVITE = 5;
+    const LIMITE_GANHO_TOTAL_DIA = 3;
 
     let posts = [];
+    let pendentes = [];
+    let fundoUsuarios = parseFloat(localStorage.getItem('anunciarFundo') || 0);
+
+    const missoes = [
+      { id: 'curtir10', nome: 'Curta 10 posts', recompensa: 0.10, meta: 10, tipo: 'curtir', limiteDiario: 1 },
+      { id: 'convidarAtivo', nome: 'Convide 1 amigo ativo', recompensa: 1.00, meta: 1, tipo: 'convite', limiteTotal: 5, desc: 'Amigo precisa curtir 3 posts e convidar 1 pessoa' },
+      { id: 'seguir3', nome: 'Siga 3 empresas', recompensa: 0.30, meta: 3, tipo: 'seguir', limiteTotal: 1 },
+      { id: 'login7', nome: 'Entre 7 dias seguidos', recompensa: 0.50, meta: 7, tipo: 'login', limiteTotal: 1 }
+    ];
+
     let usuario = {
       id: localStorage.getItem('anunciarUserId') || Date.now().toString(),
       saldo: parseFloat(localStorage.getItem('anunciarSaldo') || 0),
       missoesFeitas: JSON.parse(localStorage.getItem('anunciarMissoes') || '[]'),
       historico: JSON.parse(localStorage.getItem('anunciarHistorico') || '[]'),
-      curtidasHoje: parseInt(localStorage.getItem('anunciarCurtidasHoje') || 0)
+      curtidasHoje: parseInt(localStorage.getItem('anunciarCurtidasHoje') || 0),
+      seguindo: JSON.parse(localStorage.getItem('anunciarSeguindo') || '[]'),
+      convidados: JSON.parse(localStorage.getItem('anunciarConvidados') || '[]'),
+      convidadosPagos: JSON.parse(localStorage.getItem('anunciarConvidadosPagos') || '[]'),
+      indicadoPor: localStorage.getItem('anunciarIndicadoPor') || null,
+      ultimoLogin: localStorage.getItem('anunciarUltimoLogin') || '',
+      diasSeguidos: parseInt(localStorage.getItem('anunciarDiasSeguidos') || 0)
     };
     localStorage.setItem('anunciarUserId', usuario.id);
 
-    const missoes = [
-      { id: 'curtir10', nome: 'Curta 10 posts', recompensa: 0.10, meta: 10, tipo: 'curtir' },
-      { id: 'convidar1', nome: 'Convide 1 amigo', recompensa: 1.00, meta: 1, tipo: 'convite' },
-      { id: 'login7', nome: 'Entre 7 dias seguidos', recompensa: 0.50, meta: 7, tipo: 'login' }
-    ];
+    // SISTEMA DE CONVITE
+    window.onload = function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const ref = urlParams.get('ref');
+      if (ref && !usuario.indicadoPor && ref !== usuario.id) {
+        usuario.indicadoPor = ref;
+        localStorage.setItem('anunciarIndicadoPor', ref);
+        let indicador = JSON.parse(localStorage.getItem('user_' + ref) || '{}');
+        indicador.convidados = indicador.convidados || [];
+        if (!indicador.convidados.includes(usuario.id)) {
+          indicador.convidados.push(usuario.id);
+          localStorage.setItem('user_' + ref, JSON.stringify(indicador));
+        }
+      }
+      verificarLoginDiario();
+      carregarDados();
+    };
+
+    function verificarLoginDiario() {
+      const hoje = new Date().toLocaleDateString('pt-BR');
+      if (usuario.ultimoLogin !== hoje) {
+        const ontem = new Date();
+        ontem.setDate(ontem.getDate() - 1);
+        if (usuario.ultimoLogin === ontem.toLocaleDateString('pt-BR')) {
+          usuario.diasSeguidos++;
+        } else {
+          usuario.diasSeguidos = 1;
+        }
+        usuario.ultimoLogin = hoje;
+        usuario.curtidasHoje = 0;
+        verificarMissao('login');
+        salvarUsuario();
+      }
+    }
+
+    function copiarLinkConvite() {
+      const link = `${window.location.origin}${window.location.pathname}?ref=${usuario.id}`;
+      navigator.clipboard.writeText(link);
+      alert('Link copiado! Manda pros amigos:\n\n' + link);
+    }
+
+    function carregarDados() {
+      posts = JSON.parse(localStorage.getItem('anunciarPosts') || '[]');
+      pendentes = JSON.parse(localStorage.getItem('anunciarPendentes') || '[]');
+      const chaveSalva = localStorage.getItem('anunciarChavePix');
+      if (chaveSalva) document.getElementById('chavePix').innerText = chaveSalva;
+      
+      if (posts.length === 0) {
+        posts = [
+          {id:"1",nome:"Pastelaria do Zé",texto:"Pastel + Caldo R$ 8\nChama no Zap!",midia:"https://via.placeholder.com/400x400/f59e0b/0f172a?text=PASTEL",curtidas:47,comentarios:8,seguidores:12,curtidoPor:[],empresaId:"pastelariadoze"}
+        ];
+      }
+      
+      atualizarSaldoTela();
+      renderizarFeed();
+    }
 
     function salvarUsuario() {
       localStorage.setItem('anunciarSaldo', usuario.saldo);
       localStorage.setItem('anunciarMissoes', JSON.stringify(usuario.missoesFeitas));
       localStorage.setItem('anunciarHistorico', JSON.stringify(usuario.historico));
       localStorage.setItem('anunciarCurtidasHoje', usuario.curtidasHoje);
+      localStorage.setItem('anunciarSeguindo', JSON.stringify(usuario.seguindo));
+      localStorage.setItem('anunciarConvidados', JSON.stringify(usuario.convidados));
+      localStorage.setItem('anunciarConvidadosPagos', JSON.stringify(usuario.convidadosPagos));
+      localStorage.setItem('anunciarUltimoLogin', usuario.ultimoLogin);
+      localStorage.setItem('anunciarDiasSeguidos', usuario.diasSeguidos);
+      localStorage.setItem('user_' + usuario.id, JSON.stringify(usuario));
       atualizarSaldoTela();
     }
 
     function atualizarSaldoTela() {
       document.getElementById('meuSaldo').innerText = usuario.saldo.toFixed(2).replace('.', ',');
       document.getElementById('meuSaldo2').innerText = usuario.saldo.toFixed(2).replace('.', ',');
+      document.getElementById('fundoTotal').innerText = fundoUsuarios.toFixed(2).replace('.', ',');
     }
 
     function abrirTela(id) {
       document.getElementById('telaFeed').style.display = 'none';
       document.getElementById('telaMissoes').style.display = 'none';
       document.getElementById('telaCarteira').style.display = 'none';
+      document.getElementById('painelAdm').style.display = 'none';
       document.getElementById(id).style.display = 'block';
       
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('ativo'));
@@ -224,21 +352,34 @@
       const feed = document.getElementById('feed');
       feed.innerHTML = '';
       
-      posts.slice().reverse().forEach(post => {
+      const postsOrdenados = posts.slice().sort((a, b) => {
+        const segueA = usuario.seguindo.includes(a.empresaId) ? 1 : 0;
+        const segueB = usuario.seguindo.includes(b.empresaId) ? 1 : 0;
+        return segueB - segueA;
+      });
+
+      postsOrdenados.reverse().forEach(post => {
         const div = document.createElement('div');
         div.className = 'post';
         const isVideo = post.midia.includes('youtube') || post.midia.includes('mp4');
+        const jaSegue = usuario.seguindo.includes(post.empresaId);
+        
         div.innerHTML = `
           ${isVideo ? 
             `<iframe class="post-video" src="${post.midia}" frameborder="0"></iframe>` : 
             `<img src="${post.midia}" class="post-img" onerror="this.src='https://via.placeholder.com/400x400/1e293b/f59e0b?text=ANÚNCIO'">`
           }
           <div class="post-content">
-            <div class="post-autor">${post.nome}</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <div class="post-autor">${post.nome}</div>
+              <button onclick="seguirEmpresa('${post.empresaId}')" class="btn-seguir ${jaSegue ? 'btn-seguindo' : ''}">
+                ${jaSegue ? 'Seguindo ✓' : '+ Seguir'}
+              </button>
+            </div>
             <div class="post-texto">${post.texto}</div>
             <div class="post-actions">
               <span onclick="curtir('${post.id}')">❤️ ${post.curtidas}</span>
-              <span>💬 ${post.comentarios}</span>
+              <span>👥 ${post.seguidores || 0} seguidores</span>
               <span style="margin-left:auto;color:#f59e0b;font-size:11px;">PATROCINADO</span>
             </div>
           </div>
@@ -255,8 +396,27 @@
         usuario.curtidasHoje++;
         localStorage.setItem('anunciarPosts', JSON.stringify(posts));
         verificarMissao('curtir');
+        validarConviteAtivo(usuario.id);
         renderizarFeed();
       }
+    }
+
+    function seguirEmpresa(empresaId) {
+      const index = usuario.seguindo.indexOf(empresaId);
+      const empresaPosts = posts.filter(p => p.empresaId === empresaId);
+      
+      if (index === -1) {
+        usuario.seguindo.push(empresaId);
+        empresaPosts.forEach(p => p.seguidores = (p.seguidores || 0) + 1);
+        verificarMissao('seguir');
+      } else {
+        usuario.seguindo.splice(index, 1);
+        empresaPosts.forEach(p => p.seguidores = Math.max(0, (p.seguidores || 1) - 1));
+      }
+      
+      localStorage.setItem('anunciarPosts', JSON.stringify(posts));
+      salvarUsuario();
+      renderizarFeed();
     }
 
     function renderizarMissoes() {
@@ -264,13 +424,18 @@
       lista.innerHTML = '';
       missoes.forEach(m => {
         const feita = usuario.missoesFeitas.includes(m.id);
-        const progresso = m.tipo === 'curtir' ? usuario.curtidasHoje : 0;
+        let progresso = 0;
+        if (m.tipo === 'curtir') progresso = usuario.curtidasHoje;
+        if (m.tipo === 'seguir') progresso = usuario.seguindo.length;
+        if (m.tipo === 'login') progresso = usuario.diasSeguidos;
+        
         const div = document.createElement('div');
         div.className = 'missao' + (feita ? ' missao-completa' : '');
         div.innerHTML = `
           <div>
             <div style="font-weight:bold;">${m.nome}</div>
             <div style="font-size:13px;color:#94a3b8;">${feita ? 'Completa!' : `Progresso: ${progresso}/${m.meta}`}</div>
+            ${m.desc ? `<div style="font-size:11px;color:#64748b;margin-top:4px;">${m.desc}</div>` : ''}
           </div>
           <div style="color:#22c55e;font-weight:bold;">+R$ ${m.recompensa.toFixed(2)}</div>
         `;
@@ -281,21 +446,70 @@
     function verificarMissao(tipo) {
       missoes.forEach(m => {
         if (m.tipo === tipo && !usuario.missoesFeitas.includes(m.id)) {
-          const progresso = tipo === 'curtir' ? usuario.curtidasHoje : 0;
+          let progresso = 0;
+          if (tipo === 'curtir') progresso = usuario.curtidasHoje;
+          if (tipo === 'seguir') progresso = usuario.seguindo.length;
+          if (tipo === 'login') progresso = usuario.diasSeguidos;
+          
           if (progresso >= m.meta) {
-            usuario.missoesFeitas.push(m.id);
-            adicionarSaldo(m.recompensa, `Missão: ${m.nome}`);
-            alert(`Missão completa! +R$ ${m.recompensa.toFixed(2)}`);
+            if (adicionarSaldo(m.recompensa, `Missão: ${m.nome}`, m.tipo)) {
+              usuario.missoesFeitas.push(m.id);
+              salvarUsuario();
+            }
           }
         }
       });
-      salvarUsuario();
     }
 
-    function adicionarSaldo(valor, motivo) {
+    function validarConviteAtivo(idConvidado) {
+      const convidado = JSON.parse(localStorage.getItem('user_' + idConvidado) || '{}');
+      if (!convidado.indicadoPor || convidado.convitePago) return;
+      
+      const curtidas = convidado.curtidasHoje || 0;
+      const convidou = convidado.convidados?.length || 0;
+      const indicadorId = convidado.indicadoPor;
+      
+      if (curtidas >= 3 && convidou >= 1) {
+        let indicador = JSON.parse(localStorage.getItem('user_' + indicadorId) || '{}');
+        if (!indicador.convidadosPagos) indicador.convidadosPagos = [];
+        
+        if (!indicador.convidadosPagos.includes(idConvidado)) {
+          // Paga pro indicador se tiver limite
+          const ganhoConvite = indicador.historico?.filter(h => h.motivo.includes('Convide')).reduce((t, h) => t + h.valor, 0) || 0;
+          if (ganhoConvite < LIMITE_GANHO_CONVITE && fundoUsuarios >= 1.00) {
+            indicador.saldo = (indicador.saldo || 0) + 1.00;
+            indicador.historico = indicador.historico || [];
+            indicador.historico.unshift({ valor: 1.00, motivo: 'Missão: Convide 1 amigo ativo', data: new Date().toLocaleDateString('pt-BR') });
+            indicador.convidadosPagos.push(idConvidado);
+            fundoUsuarios -= 1.00;
+            localStorage.setItem('anunciarFundo', fundoUsuarios);
+            localStorage.setItem('user_' + indicadorId, JSON.stringify(indicador));
+            
+            convidado.convitePago = true;
+            localStorage.setItem('user_' + idConvidado, JSON.stringify(convidado));
+          }
+        }
+      }
+    }
+
+    function adicionarSaldo(valor, motivo, tipoMissao) {
+      if (fundoUsuarios < valor) return false;
+      
+      const hoje = new Date().toLocaleDateString('pt-BR');
+      const ganhoHoje = usuario.historico.filter(h => h.data === hoje).reduce((t, h) => t + h.valor, 0);
+      if (ganhoHoje + valor > LIMITE_GANHO_TOTAL_DIA) return false;
+
+      if (tipoMissao === 'convite') {
+        const ganhoConvite = usuario.historico.filter(h => h.motivo.includes('Convide')).reduce((t, h) => t + h.valor, 0);
+        if (ganhoConvite >= LIMITE_GANHO_CONVITE) return false;
+      }
+
       usuario.saldo += valor;
-      usuario.historico.unshift({ valor, motivo, data: new Date().toLocaleDateString('pt-BR') });
+      fundoUsuarios -= valor;
+      usuario.historico.unshift({ valor, motivo, data: hoje });
+      localStorage.setItem('anunciarFundo', fundoUsuarios);
       salvarUsuario();
+      return true;
     }
 
     function renderizarHistorico() {
@@ -327,7 +541,9 @@
       const chave = prompt("Digite sua chave Pix pra receber R$ " + usuario.saldo.toFixed(2));
       if (chave) {
         alert("Solicitação enviada! Você receberá em até 48h úteis.");
-        adicionarSaldo(-usuario.saldo, "Saque solicitado");
+        usuario.saldo = 0;
+        usuario.historico.unshift({ valor: -usuario.saldo, motivo: "Saque solicitado", data: new Date().toLocaleDateString('pt-BR') });
+        salvarUsuario();
       }
     }
 
@@ -348,40 +564,102 @@
         return;
       }
 
+      const id = Date.now().toString();
+      pendentes.push({ id, nome, texto, midia, data: new Date().toLocaleDateString('pt-BR') });
+      localStorage.setItem('anunciarPendentes', JSON.stringify(pendentes));
+
       const msg = `Paguei R$ 10 pra anunciar!%0A%0ANome: ${nome}%0ALegenda: ${texto}%0AMídia: ${midia}%0A%0ASegue comprovante:`;
       window.open(`https://wa.me/${SEU_WHATSAPP}?text=${msg}`, '_blank');
       fecharModalAnunciar();
-      alert("Beleza! Me manda o comprovante no Zap que eu libero seu post.");
+      alert("Pendência criada! Assim que confirmar o Pix, seu post entra no ar.");
+      
+      document.getElementById('nomeAnunciante').value = '';
+      document.getElementById('textoAnuncio').value = '';
+      document.getElementById('midiaAnuncio').value = '';
     }
 
     function abrirAdm() {
-      const senha = prompt("Senha ADM:");
-      if (senha === "anunciar123") {
-        const midia = prompt("Cole o link da FOTO/VÍDEO do post:");
-        const nome = prompt("Nome do anunciante:");
-        const texto = prompt("Legenda:");
-        if (midia && nome && texto) {
-          posts.push({
-            id: Date.now().toString(),
-            nome, texto, midia,
-            curtidas: 0, comentarios: 0, curtidoPor: []
-          });
-          localStorage.setItem('anunciarPosts', JSON.stringify(posts));
-          renderizarFeed();
-          alert("Post publicado! Lembre-se: R$ 5 vai pra você, R$ 5 pro fundo dos usuários.");
-        }
+      const senha = prompt("Senha do ADM:");
+      if (senha === SENHA_ADM) {
+        document.getElementById('telaFeed').style.display = 'none';
+        document.getElementById('telaMissoes').style.display = 'none';
+        document.getElementById('telaCarteira').style.display = 'none';
+        document.getElementById('painelAdm').style.display = 'block';
+        listarPendentes();
+        atualizarSaldoTela();
+      } else if (senha !== null) {
+        alert("Senha errada!");
       }
     }
 
-    // INICIAR
-    posts = JSON.parse(localStorage.getItem('anunciarPosts') || '[]');
-    if (posts.length === 0) {
-      posts = [
-        {id:"1",nome:"Pastelaria do Zé",texto:"Pastel + Caldo R$ 8",midia:"https://via.placeholder.com/400x400/f59e0b/0f172a?text=PASTEL",curtidas:47,comentarios:8,curtidoPor:[]}
-      ];
+    function sairAdm() {
+      document.getElementById('painelAdm').style.display = 'none';
+      document.getElementById('telaFeed').style.display = 'block';
     }
-    renderizarFeed();
-    atualizarSaldoTela();
+
+    function listarPendentes() {
+      const lista = document.getElementById('listaPendentes');
+      lista.innerHTML = '';
+      if (pendentes.length === 0) {
+        lista.innerHTML = '<p style="color:#94a3b8;">Nenhum anúncio pendente.</p>';
+        return;
+      }
+      pendentes.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'post-pendente';
+        div.innerHTML = `
+          <p><strong>${p.nome}</strong></p>
+          <p style="margin:10px 0;color:#cbd5e1;">${p.texto}</p>
+          <img src="${p.midia}" style="width:100%;border-radius:8px;margin:10px 0;" onerror="this.style.display='none'">
+          <p style="font-size:12px;color:#64748b;">${p.data}</p>
+          <button class="btn btn-verde" onclick="aprovarPost('${p.id}')" style="margin-top:10px;">Aprovar Post</button>
+          <button class="btn btn-vermelho" onclick="rejeitarPost('${p.id}')">Rejeitar</button>
+        `;
+        lista.appendChild(div);
+      });
+    }
+
+    function aprovarPost(id) {
+      const index = pendentes.findIndex(p => p.id === id);
+      if (index !== -1) {
+        const postAprovado = pendentes[index];
+        postAprovado.curtidas = 0;
+        postAprovado.comentarios = 0;
+        postAprovado.seguidores = 0;
+        postAprovado.curtidoPor = [];
+        postAprovado.empresaId = postAprovado.nome.replace(/\s/g, '').toLowerCase() + Date.now();
+        posts.push(postAprovado);
+        pendentes.splice(index, 1);
+        
+        fundoUsuarios += VALOR_POST * PORCENTAGEM_USUARIO;
+        localStorage.setItem('anunciarFundo', fundoUsuarios);
+        localStorage.setItem('anunciarPosts', JSON.stringify(posts));
+        localStorage.setItem('anunciarPendentes', JSON.stringify(pendentes));
+        listarPendentes();
+        renderizarFeed();
+        atualizarSaldoTela();
+        alert("Post aprovado! R$ 5 foi pro fundo dos usuários.");
+      }
+    }
+
+    function rejeitarPost(id) {
+      if (confirm("Tem certeza? A pessoa já pagou.")) {
+        pendentes = pendentes.filter(p => p.id !== id);
+        localStorage.setItem('anunciarPendentes', JSON.stringify(pendentes));
+        listarPendentes();
+      }
+    }
+
+    function salvarChavePix() {
+      const nova = document.getElementById('novaChavePix').value.trim();
+      if (nova) {
+        localStorage.setItem('anunciarChavePix', nova);
+        document.getElementById('chavePix').innerText = nova;
+        alert("Chave Pix atualizada!");
+      }
+    }
+
+    carregarDados();
   </script>
 </body>
 </html>
