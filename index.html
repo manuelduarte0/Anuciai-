@@ -3,264 +3,337 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Anunciar - Pague pra Postar</title>
+  <title>Anunciar - Ganhe Dinheiro Vendo Anúncios</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
       background: #0f172a;
       color: white;
-      padding: 15px;
+      padding-bottom: 80px;
     }
-    .container {
-      max-width: 500px;
-      margin: 0 auto;
-    }
+    .container { max-width: 500px; margin: 0 auto; padding: 15px; }
     .header {
       background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
       padding: 20px;
       border-radius: 15px;
       text-align: center;
-      margin-bottom: 20px;
-      box-shadow: 0 5px 20px rgba(245, 158, 11, 0.3);
+      margin-bottom: 15px;
     }
-    .header h1 { font-size: 28px; color: #0f172a; }
-    .header p { color: #0f172a; font-weight: 600; margin-top: 5px; }
-    
-    .btn-anunciar {
-      background: #22c55e;
-      color: white;
-      border: none;
-      padding: 18px;
-      border-radius: 12px;
-      font-size: 18px;
-      font-weight: bold;
-      width: 100%;
-      cursor: pointer;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
-    }
-    .btn-anunciar:hover { background: #16a34a; }
-
-    .post {
+    .header h1 { font-size: 26px; color: #0f172a; }
+    .saldo-box {
       background: #1e293b;
-      padding: 18px;
+      padding: 15px;
       border-radius: 12px;
       margin-bottom: 15px;
-      border: 1px solid #334155;
-    }
-    .post-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      border: 1px solid #22c55e;
     }
-    .post-autor { font-weight: bold; color: #38bdf8; }
-    .post-patrocinado {
+    .saldo-valor { font-size: 24px; font-weight: bold; color: #22c55e; }
+    .btn {
+      background: #38bdf8; color: #0f172a; border: none; 
+      padding: 12px 18px; border-radius: 10px; font-weight: bold; cursor: pointer;
+    }
+    .btn-verde { background: #22c55e; color: white; }
+    .btn-anunciar {
       background: #f59e0b;
       color: #0f172a;
-      padding: 3px 8px;
-      border-radius: 5px;
-      font-size: 11px;
-      font-weight: bold;
+      width: 100%;
+      padding: 16px;
+      font-size: 18px;
+      margin-bottom: 15px;
     }
-    .post-texto { line-height: 1.6; margin-bottom: 12px; white-space: pre-wrap; }
-    .post-img { width: 100%; border-radius: 8px; margin: 10px 0; }
-    .post-footer {
+    .post {
+      background: #1e293b;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #334155;
+      overflow: hidden;
+    }
+    .post-img, .post-video { width: 100%; max-height: 400px; object-fit: cover; }
+    .post-content { padding: 15px; }
+    .post-autor { font-weight: bold; color: #38bdf8; margin-bottom: 8px; }
+    .post-texto { margin-bottom: 12px; }
+    .post-actions {
       display: flex;
       gap: 20px;
       color: #94a3b8;
-      font-size: 14px;
     }
-    .post-footer span { cursor: pointer; }
-    .post-data { font-size: 12px; color: #64748b; margin-top: 8px; }
-
-    .modal {
-      display: none;
+    .post-actions span { cursor: pointer; }
+    .nav-bottom {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.8);
-      z-index: 1000;
-      overflow-y: auto;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #1e293b;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+      border-top: 1px solid #334155;
+    }
+    .nav-item { text-align: center; color: #94a3b8; font-size: 12px; cursor: pointer; }
+    .nav-item.ativo { color: #f59e0b; }
+    .modal {
+      display: none; position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%; background: rgba(0,0,0,0.9);
+      z-index: 1000; overflow-y: auto;
     }
     .modal-content {
-      background: #1e293b;
-      max-width: 500px;
-      margin: 30px auto;
-      padding: 25px;
-      border-radius: 15px;
-      border: 1px solid #334155;
+      background: #1e293b; max-width: 500px;
+      margin: 20px auto; padding: 25px; border-radius: 15px;
     }
-    .modal h2 { color: #f59e0b; margin-bottom: 15px; }
     .modal input, .modal textarea {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border-radius: 8px;
-      border: 2px solid #475569;
-      background: #0f172a;
-      color: white;
-      font-size: 16px;
+      width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px;
+      border: 2px solid #475569; background: #0f172a; color: white;
     }
-    .modal textarea { min-height: 100px; resize: vertical; }
-    .modal label { display: block; margin-top: 12px; color: #cbd5e1; font-weight: bold; }
-    .btn { 
-      background: #38bdf8; color: #0f172a; border: none; 
-      padding: 14px; border-radius: 10px; font-size: 16px; 
-      font-weight: bold; cursor: pointer; width: 100%; margin: 10px 0; 
+    .missao {
+      background: #0f172a; padding: 15px; border-radius: 10px;
+      margin: 10px 0; display: flex; justify-content: space-between; align-items: center;
     }
-    .btn-vermelho { background: #ef4444; color: white; }
-    .btn-zap { background: #25D366; color: white; }
-    
-    .pix-box {
-      background: #0f172a;
-      padding: 15px;
-      border-radius: 10px;
-      margin: 15px 0;
-      border: 2px dashed #f59e0b;
-      text-align: center;
-    }
-    .pix-chave {
-      font-size: 14px;
-      word-break: break-all;
-      color: #38bdf8;
-      margin: 10px 0;
-    }
-
-    .link-adm { position: fixed; bottom: 10px; right: 10px; color: #334155; font-size: 12px; cursor: pointer; }
-    #painelAdm { display: none; }
-    .post-pendente {
-      background: #0f172a;
-      padding: 15px;
-      border-radius: 10px;
-      margin: 10px 0;
-      border: 1px solid #f59e0b;
-    }
+    .missao-completa { opacity: 0.5; border: 1px solid #22c55e; }
+    #telaFeed, #telaMissoes, #telaCarteira { display: none; }
+    #telaFeed { display: block; }
   </style>
 </head>
 <body>
-  <div class="container">
+  <!-- TELA FEED -->
+  <div id="telaFeed" class="container">
     <div class="header">
       <h1>ANUNCIAR 💰</h1>
-      <p>A rede onde cada post vale R$ 10</p>
+      <p>Poste pagando. Ganhe engajando.</p>
     </div>
 
-    <button class="btn-anunciar" onclick="abrirModalAnunciar()">
-      📢 ANUNCIAR AGORA POR R$ 10
+    <div class="saldo-box">
+      <div>
+        <div style="font-size:13px;color:#94a3b8;">Seu saldo</div>
+        <div class="saldo-valor">R$ <span id="meuSaldo">0,00</span></div>
+      </div>
+      <button class="btn" onclick="abrirTela('telaCarteira')">SACAR</button>
+    </div>
+
+    <button class="btn btn-anunciar" onclick="abrirModalAnunciar()">
+      📸 ANUNCIAR FOTO/VÍDEO - R$ 10
     </button>
 
     <div id="feed"></div>
   </div>
 
-  <!-- MODAL PRA ANUNCIAR -->
+  <!-- TELA MISSOES -->
+  <div id="telaMissoes" class="container">
+    <div class="header"><h1>MISSÕES 💸</h1><p>Ganhe dinheiro fácil</p></div>
+    <div id="listaMissoes"></div>
+  </div>
+
+  <!-- TELA CARTEIRA -->
+  <div id="telaCarteira" class="container">
+    <div class="header"><h1>CARTEIRA</h1></div>
+    <div class="saldo-box" style="flex-direction:column;gap:10px;">
+      <div style="font-size:16px;">Saldo disponível:</div>
+      <div class="saldo-valor" style="font-size:32px;">R$ <span id="meuSaldo2">0,00</span></div>
+      <button class="btn btn-verde" onclick="sacarDinheiro()">SACAR VIA PIX</button>
+      <p style="font-size:12px;color:#94a3b8;text-align:center;">Saque mínimo: R$ 20,00</p>
+    </div>
+    <h3 style="margin:20px 0 10px 0;">Histórico</h3>
+    <div id="historicoGanhos"></div>
+  </div>
+
+  <!-- NAV BOTTOM -->
+  <div class="nav-bottom">
+    <div class="nav-item ativo" onclick="abrirTela('telaFeed')">🏠<br>Feed</div>
+    <div class="nav-item" onclick="abrirTela('telaMissoes')">🎯<br>Missões</div>
+    <div class="nav-item" onclick="abrirTela('telaCarteira')">💰<br>Carteira</div>
+    <div class="nav-item" onclick="abrirAdm()">🔐<br>ADM</div>
+  </div>
+
+  <!-- MODAL ANUNCIAR -->
   <div class="modal" id="modalAnunciar">
     <div class="modal-content">
-      <h2>Anunciar na Rede por R$ 10</h2>
-      <p style="color:#94a3b8;margin-bottom:15px;">Seu post fica no ar pra sempre. Sem spam, só conteúdo que vale.</p>
+      <h2 style="color:#f59e0b;">Anunciar por R$ 10</h2>
+      <p style="color:#94a3b8;margin-bottom:15px;">Só foto ou vídeo. 50% da grana vai pros usuários que engajam.</p>
       
-      <label>Seu Nome ou Empresa:</label>
-      <input type="text" id="nomeAnunciante" placeholder="Ex: Loja do Manuel" maxlength="30">
+      <label>Nome/Empresa:</label>
+      <input type="text" id="nomeAnunciante" placeholder="Ex: Pastelaria do Zé" maxlength="30">
       
-      <label>Escreva seu anúncio:</label>
-      <textarea id="textoAnuncio" placeholder="O que você quer anunciar? Pode colocar WhatsApp, Instagram, link..." maxlength="500"></textarea>
+      <label>Legenda do anúncio:</label>
+      <textarea id="textoAnuncio" placeholder="Descreva sua oferta..." maxlength="200"></textarea>
       
-      <label>Link da Imagem (opcional):</label>
-      <input type="text" id="imgAnuncio" placeholder="Cole o link de uma imagem aqui">
+      <label>Link da Foto ou Vídeo:</label>
+      <input type="text" id="midiaAnuncio" placeholder="Cole link do Imgur, YouTube, etc">
 
-      <div class="pix-box">
-        <p style="font-weight:bold;color:#f59e0b;">PAGUE R$ 10 VIA PIX</p>
-        <p style="font-size:13px;margin:8px 0;">Chave Pix Celular:</p>
-        <div class="pix-chave" id="chavePix">11999999999</div>
-        <p style="font-size:12px;color:#94a3b8;">Nome: Manuel Silva</p>
+      <div style="background:#0f172a;padding:15px;border-radius:10px;margin:15px 0;border:2px dashed #f59e0b;text-align:center;">
+        <p style="font-weight:bold;color:#f59e0b;">PIX R$ 10,00</p>
+        <p style="font-size:13px;">Chave: <span id="chavePix">11999999999</span></p>
       </div>
 
-      <p style="font-size:13px;color:#f59e0b;margin:10px 0;">
-        Após pagar, clique abaixo e envie o comprovante no WhatsApp. 
-        Seu post entra no ar em até 1 hora.
-      </p>
-
-      <button class="btn btn-zap" onclick="enviarWhatsApp()">ENVIAR COMPROVANTE NO WHATSAPP</button>
-      <button class="btn btn-vermelho" onclick="fecharModalAnunciar()">Cancelar</button>
+      <button class="btn" style="background:#25D366;width:100%;" onclick="enviarWhatsApp()">PAGUEI - ENVIAR COMPROVANTE</button>
+      <button class="btn" style="background:#ef4444;width:100%;margin-top:10px;" onclick="fecharModalAnunciar()">Cancelar</button>
     </div>
   </div>
-
-  <!-- PAINEL ADM -->
-  <div class="container" id="painelAdm">
-    <div class="header">
-      <h1>PAINEL ADM - ANUNCIAR 🔐</h1>
-    </div>
-    
-    <h3 style="margin:20px 0;">Posts Pendentes</h3>
-    <div id="listaPendentes"></div>
-
-    <h3 style="margin:30px 0 15px 0;">Configurar Chave Pix</h3>
-    <input type="text" id="novaChavePix" placeholder="Digite sua chave Pix">
-    <button class="btn" onclick="salvarChavePix()">Salvar Chave Pix</button>
-
-    <button class="btn btn-vermelho" onclick="sairAdm()" style="margin-top:30px;">Sair do ADM</button>
-  </div>
-
-  <div class="link-adm" onclick="abrirAdm()">ADM</div>
 
   <script>
-    const SENHA_ADM = "anunciar123"; // TROCA ESSA SENHA!
-    const SEU_WHATSAPP = "5511999999999"; // COLOCA SEU NÚMERO COM 55 NA FRENTE
+    const SEU_WHATSAPP = "5511999999999";
+    const VALOR_POST = 10;
+    const PORCENTAGEM_USUARIO = 0.5; // 50%
+    const SAQUE_MINIMO = 20;
 
     let posts = [];
-    let pendentes = [];
+    let usuario = {
+      id: localStorage.getItem('anunciarUserId') || Date.now().toString(),
+      saldo: parseFloat(localStorage.getItem('anunciarSaldo') || 0),
+      missoesFeitas: JSON.parse(localStorage.getItem('anunciarMissoes') || '[]'),
+      historico: JSON.parse(localStorage.getItem('anunciarHistorico') || '[]'),
+      curtidasHoje: parseInt(localStorage.getItem('anunciarCurtidasHoje') || 0)
+    };
+    localStorage.setItem('anunciarUserId', usuario.id);
 
-    function carregarDados() {
-      const postsSalvos = localStorage.getItem('anunciarPosts');
-      const pendentesSalvos = localStorage.getItem('anunciarPendentes');
-      const chaveSalva = localStorage.getItem('anunciarChavePix');
-      
-      posts = postsSalvos ? JSON.parse(postsSalvos) : [];
-      pendentes = pendentesSalvos ? JSON.parse(pendentesSalvos) : [];
-      
-      if (chaveSalva) document.getElementById('chavePix').innerText = chaveSalva;
-      
-      renderizarFeed();
+    const missoes = [
+      { id: 'curtir10', nome: 'Curta 10 posts', recompensa: 0.10, meta: 10, tipo: 'curtir' },
+      { id: 'convidar1', nome: 'Convide 1 amigo', recompensa: 1.00, meta: 1, tipo: 'convite' },
+      { id: 'login7', nome: 'Entre 7 dias seguidos', recompensa: 0.50, meta: 7, tipo: 'login' }
+    ];
+
+    function salvarUsuario() {
+      localStorage.setItem('anunciarSaldo', usuario.saldo);
+      localStorage.setItem('anunciarMissoes', JSON.stringify(usuario.missoesFeitas));
+      localStorage.setItem('anunciarHistorico', JSON.stringify(usuario.historico));
+      localStorage.setItem('anunciarCurtidasHoje', usuario.curtidasHoje);
+      atualizarSaldoTela();
     }
 
-    function salvarDados() {
-      localStorage.setItem('anunciarPosts', JSON.stringify(posts));
-      localStorage.setItem('anunciarPendentes', JSON.stringify(pendentes));
+    function atualizarSaldoTela() {
+      document.getElementById('meuSaldo').innerText = usuario.saldo.toFixed(2).replace('.', ',');
+      document.getElementById('meuSaldo2').innerText = usuario.saldo.toFixed(2).replace('.', ',');
+    }
+
+    function abrirTela(id) {
+      document.getElementById('telaFeed').style.display = 'none';
+      document.getElementById('telaMissoes').style.display = 'none';
+      document.getElementById('telaCarteira').style.display = 'none';
+      document.getElementById(id).style.display = 'block';
+      
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('ativo'));
+      event.currentTarget.classList.add('ativo');
+      
+      if (id === 'telaMissoes') renderizarMissoes();
+      if (id === 'telaCarteira') renderizarHistorico();
     }
 
     function renderizarFeed() {
       const feed = document.getElementById('feed');
       feed.innerHTML = '';
       
-      if (posts.length === 0) {
-        feed.innerHTML = '<p style="text-align:center;color:#94a3b8;margin-top:40px;">Nenhum anúncio ainda. Seja o primeiro!</p>';
-        return;
-      }
-
       posts.slice().reverse().forEach(post => {
         const div = document.createElement('div');
         div.className = 'post';
+        const isVideo = post.midia.includes('youtube') || post.midia.includes('mp4');
         div.innerHTML = `
-          <div class="post-header">
-            <span class="post-autor">${post.nome}</span>
-            <span class="post-patrocinado">PATROCINADO</span>
+          ${isVideo ? 
+            `<iframe class="post-video" src="${post.midia}" frameborder="0"></iframe>` : 
+            `<img src="${post.midia}" class="post-img" onerror="this.src='https://via.placeholder.com/400x400/1e293b/f59e0b?text=ANÚNCIO'">`
+          }
+          <div class="post-content">
+            <div class="post-autor">${post.nome}</div>
+            <div class="post-texto">${post.texto}</div>
+            <div class="post-actions">
+              <span onclick="curtir('${post.id}')">❤️ ${post.curtidas}</span>
+              <span>💬 ${post.comentarios}</span>
+              <span style="margin-left:auto;color:#f59e0b;font-size:11px;">PATROCINADO</span>
+            </div>
           </div>
-          <div class="post-texto">${post.texto}</div>
-          ${post.img ? `<img src="${post.img}" class="post-img" onerror="this.style.display='none'">` : ''}
-          <div class="post-footer">
-            <span onclick="curtir('${post.id}')">❤️ ${post.curtidas}</span>
-            <span>💬 ${post.comentarios}</span>
-          </div>
-          <div class="post-data">${post.data}</div>
         `;
         feed.appendChild(div);
       });
     }
 
+    function curtir(id) {
+      const post = posts.find(p => p.id === id);
+      if (post && !post.curtidoPor.includes(usuario.id)) {
+        post.curtidas++;
+        post.curtidoPor.push(usuario.id);
+        usuario.curtidasHoje++;
+        localStorage.setItem('anunciarPosts', JSON.stringify(posts));
+        verificarMissao('curtir');
+        renderizarFeed();
+      }
+    }
+
+    function renderizarMissoes() {
+      const lista = document.getElementById('listaMissoes');
+      lista.innerHTML = '';
+      missoes.forEach(m => {
+        const feita = usuario.missoesFeitas.includes(m.id);
+        const progresso = m.tipo === 'curtir' ? usuario.curtidasHoje : 0;
+        const div = document.createElement('div');
+        div.className = 'missao' + (feita ? ' missao-completa' : '');
+        div.innerHTML = `
+          <div>
+            <div style="font-weight:bold;">${m.nome}</div>
+            <div style="font-size:13px;color:#94a3b8;">${feita ? 'Completa!' : `Progresso: ${progresso}/${m.meta}`}</div>
+          </div>
+          <div style="color:#22c55e;font-weight:bold;">+R$ ${m.recompensa.toFixed(2)}</div>
+        `;
+        lista.appendChild(div);
+      });
+    }
+
+    function verificarMissao(tipo) {
+      missoes.forEach(m => {
+        if (m.tipo === tipo && !usuario.missoesFeitas.includes(m.id)) {
+          const progresso = tipo === 'curtir' ? usuario.curtidasHoje : 0;
+          if (progresso >= m.meta) {
+            usuario.missoesFeitas.push(m.id);
+            adicionarSaldo(m.recompensa, `Missão: ${m.nome}`);
+            alert(`Missão completa! +R$ ${m.recompensa.toFixed(2)}`);
+          }
+        }
+      });
+      salvarUsuario();
+    }
+
+    function adicionarSaldo(valor, motivo) {
+      usuario.saldo += valor;
+      usuario.historico.unshift({ valor, motivo, data: new Date().toLocaleDateString('pt-BR') });
+      salvarUsuario();
+    }
+
+    function renderizarHistorico() {
+      const hist = document.getElementById('historicoGanhos');
+      hist.innerHTML = '';
+      if (usuario.historico.length === 0) {
+        hist.innerHTML = '<p style="color:#94a3b8;">Nenhum ganho ainda. Complete missões!</p>';
+        return;
+      }
+      usuario.historico.forEach(h => {
+        const div = document.createElement('div');
+        div.className = 'missao';
+        div.innerHTML = `
+          <div>
+            <div>${h.motivo}</div>
+            <div style="font-size:12px;color:#64748b;">${h.data}</div>
+          </div>
+          <div style="color:#22c55e;">+R$ ${h.valor.toFixed(2)}</div>
+        `;
+        hist.appendChild(div);
+      });
+    }
+
+    function sacarDinheiro() {
+      if (usuario.saldo < SAQUE_MINIMO) {
+        alert(`Saque mínimo R$ ${SAQUE_MINIMO.toFixed(2)}. Continue fazendo missões!`);
+        return;
+      }
+      const chave = prompt("Digite sua chave Pix pra receber R$ " + usuario.saldo.toFixed(2));
+      if (chave) {
+        alert("Solicitação enviada! Você receberá em até 48h úteis.");
+        adicionarSaldo(-usuario.saldo, "Saque solicitado");
+      }
+    }
+
     function abrirModalAnunciar() {
       document.getElementById('modalAnunciar').style.display = 'block';
     }
-
     function fecharModalAnunciar() {
       document.getElementById('modalAnunciar').style.display = 'none';
     }
@@ -268,119 +341,47 @@
     function enviarWhatsApp() {
       const nome = document.getElementById('nomeAnunciante').value.trim();
       const texto = document.getElementById('textoAnuncio').value.trim();
-      const img = document.getElementById('imgAnuncio').value.trim();
+      const midia = document.getElementById('midiaAnuncio').value.trim();
 
-      if (!nome || !texto) {
-        alert("Preenche seu nome e o texto do anúncio!");
+      if (!nome || !texto || !midia) {
+        alert("Preenche tudo: nome, legenda e link da foto/vídeo!");
         return;
       }
 
-      const id = Date.now().toString();
-      const novoPendente = {
-        id: id,
-        nome: nome,
-        texto: texto,
-        img: img,
-        data: new Date().toLocaleDateString('pt-BR')
-      };
-
-      pendentes.push(novoPendente);
-      salvarDados();
-
-      const msg = `Olá! Acabei de pagar R$ 10 no PIX pra anunciar na rede ANUNCIAR.%0A%0ANome: ${nome}%0AAnúncio: ${texto}%0A%0ASegue o comprovante:`;
+      const msg = `Paguei R$ 10 pra anunciar!%0A%0ANome: ${nome}%0ALegenda: ${texto}%0AMídia: ${midia}%0A%0ASegue comprovante:`;
       window.open(`https://wa.me/${SEU_WHATSAPP}?text=${msg}`, '_blank');
-      
       fecharModalAnunciar();
-      alert("Pendência criada! Assim que eu confirmar o Pix no WhatsApp, seu post entra no ar.");
-      
-      document.getElementById('nomeAnunciante').value = '';
-      document.getElementById('textoAnuncio').value = '';
-      document.getElementById('imgAnuncio').value = '';
+      alert("Beleza! Me manda o comprovante no Zap que eu libero seu post.");
     }
 
-    function curtir(id) {
-      const post = posts.find(p => p.id === id);
-      if (post) {
-        post.curtidas++;
-        salvarDados();
-        renderizarFeed();
-      }
-    }
-
-    // ADM
     function abrirAdm() {
-      const senha = prompt("Senha do ADM:");
-      if (senha === SENHA_ADM) {
-        document.querySelector('.container').style.display = 'none';
-        document.getElementById('painelAdm').style.display = 'block';
-        listarPendentes();
-      } else if (senha !== null) {
-        alert("Senha errada!");
+      const senha = prompt("Senha ADM:");
+      if (senha === "anunciar123") {
+        const midia = prompt("Cole o link da FOTO/VÍDEO do post:");
+        const nome = prompt("Nome do anunciante:");
+        const texto = prompt("Legenda:");
+        if (midia && nome && texto) {
+          posts.push({
+            id: Date.now().toString(),
+            nome, texto, midia,
+            curtidas: 0, comentarios: 0, curtidoPor: []
+          });
+          localStorage.setItem('anunciarPosts', JSON.stringify(posts));
+          renderizarFeed();
+          alert("Post publicado! Lembre-se: R$ 5 vai pra você, R$ 5 pro fundo dos usuários.");
+        }
       }
     }
 
-    function sairAdm() {
-      document.querySelector('.container').style.display = 'block';
-      document.getElementById('painelAdm').style.display = 'none';
+    // INICIAR
+    posts = JSON.parse(localStorage.getItem('anunciarPosts') || '[]');
+    if (posts.length === 0) {
+      posts = [
+        {id:"1",nome:"Pastelaria do Zé",texto:"Pastel + Caldo R$ 8",midia:"https://via.placeholder.com/400x400/f59e0b/0f172a?text=PASTEL",curtidas:47,comentarios:8,curtidoPor:[]}
+      ];
     }
-
-    function listarPendentes() {
-      const lista = document.getElementById('listaPendentes');
-      lista.innerHTML = '';
-      
-      if (pendentes.length === 0) {
-        lista.innerHTML = '<p style="color:#94a3b8;">Nenhum anúncio pendente.</p>';
-        return;
-      }
-
-      pendentes.forEach(p => {
-        const div = document.createElement('div');
-        div.className = 'post-pendente';
-        div.innerHTML = `
-          <p><strong>${p.nome}</strong></p>
-          <p style="margin:10px 0;color:#cbd5e1;">${p.texto}</p>
-          ${p.img ? `<img src="${p.img}" style="width:100%;border-radius:8px;margin:10px 0;">` : ''}
-          <p style="font-size:12px;color:#64748b;">${p.data}</p>
-          <button class="btn" onclick="aprovarPost('${p.id}')" style="background:#22c55e;margin-top:10px;">Aprovar Post</button>
-          <button class="btn btn-vermelho" onclick="rejeitarPost('${p.id}')">Rejeitar</button>
-        `;
-        lista.appendChild(div);
-      });
-    }
-
-    function aprovarPost(id) {
-      const index = pendentes.findIndex(p => p.id === id);
-      if (index !== -1) {
-        const postAprovado = pendentes[index];
-        postAprovado.curtidas = 0;
-        postAprovado.comentarios = 0;
-        posts.push(postAprovado);
-        pendentes.splice(index, 1);
-        salvarDados();
-        listarPendentes();
-        renderizarFeed();
-        alert("Post aprovado e já está no ar!");
-      }
-    }
-
-    function rejeitarPost(id) {
-      if (confirm("Tem certeza? A pessoa já pagou.")) {
-        pendentes = pendentes.filter(p => p.id !== id);
-        salvarDados();
-        listarPendentes();
-      }
-    }
-
-    function salvarChavePix() {
-      const nova = document.getElementById('novaChavePix').value.trim();
-      if (nova) {
-        localStorage.setItem('anunciarChavePix', nova);
-        document.getElementById('chavePix').innerText = nova;
-        alert("Chave Pix atualizada!");
-      }
-    }
-
-    carregarDados();
+    renderizarFeed();
+    atualizarSaldoTela();
   </script>
 </body>
 </html>
