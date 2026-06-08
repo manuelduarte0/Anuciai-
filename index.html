@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anunciar - Pague pra Postar</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      padding: 15px;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .header {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 20px rgba(245, 158, 11, 0.3);
+    }
+    .header h1 { font-size: 28px; color: #0f172a; }
+    .header p { color: #0f172a; font-weight: 600; margin-top: 5px; }
+    
+    .btn-anunciar {
+      background: #22c55e;
+      color: white;
+      border: none;
+      padding: 18px;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      width: 100%;
+      cursor: pointer;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+    }
+    .btn-anunciar:hover { background: #16a34a; }
+
+    .post {
+      background: #1e293b;
+      padding: 18px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #334155;
+    }
+    .post-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .post-autor { font-weight: bold; color: #38bdf8; }
+    .post-patrocinado {
+      background: #f59e0b;
+      color: #0f172a;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+    .post-texto { line-height: 1.6; margin-bottom: 12px; white-space: pre-wrap; }
+    .post-img { width: 100%; border-radius: 8px; margin: 10px 0; }
+    .post-footer {
+      display: flex;
+      gap: 20px;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+    .post-footer span { cursor: pointer; }
+    .post-data { font-size: 12px; color: #64748b; margin-top: 8px; }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      overflow-y: auto;
+    }
+    .modal-content {
+      background: #1e293b;
+      max-width: 500px;
+      margin: 30px auto;
+      padding: 25px;
+      border-radius: 15px;
+      border: 1px solid #334155;
+    }
+    .modal h2 { color: #f59e0b; margin-bottom: 15px; }
+    .modal input, .modal textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 2px solid #475569;
+      background: #0f172a;
+      color: white;
+      font-size: 16px;
+    }
+    .modal textarea { min-height: 100px; resize: vertical; }
+    .modal label { display: block; margin-top: 12px; color: #cbd5e1; font-weight: bold; }
+    .btn { 
+      background: #38bdf8; color: #0f172a; border: none; 
+      padding: 14px; border-radius: 10px; font-size: 16px; 
+      font-weight: bold; cursor: pointer; width: 100%; margin: 10px 0; 
+    }
+    .btn-vermelho { background: #ef4444; color: white; }
+    .btn-zap { background: #25D366; color: white; }
+    
+    .pix-box {
+      background: #0f172a;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      border: 2px dashed #f59e0b;
+      text-align: center;
+    }
+    .pix-chave {
+      font-size: 14px;
+      word-break: break-all;
+      color: #38bdf8;
+      margin: 10px 0;
+    }
+
+    .link-adm { position: fixed; bottom: 10px; right: 10px; color: #334155; font-size: 12px; cursor: pointer; }
+    #painelAdm { display: none; }
+    .post-pendente {
+      background: #0f172a;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 10px 0;
+      border: 1px solid #f59e0b;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>ANUNCIAR 💰</h1>
+      <p>A rede onde cada post vale R$ 10</p>
+    </div>
+
+    <button class="btn-anunciar" onclick="abrirModalAnunciar()">
+      📢 ANUNCIAR AGORA POR R$ 10
+    </button>
+
+    <div id="feed"></div>
+  </div>
+
+  <!-- MODAL PRA ANUNCIAR -->
+  <div class="modal" id="modalAnunciar">
+    <div class="modal-content">
+      <h2>Anunciar na Rede por R$ 10</h2>
+      <p style="color:#94a3b8;margin-bottom:15px;">Seu post fica no ar pra sempre. Sem spam, só conteúdo que vale.</p>
+      
+      <label>Seu Nome ou Empresa:</label>
+      <input type="text" id="nomeAnunciante" placeholder="Ex: Loja do Manuel" maxlength="30">
+      
+      <label>Escreva seu anúncio:</label>
+      <textarea id="textoAnuncio" placeholder="O que você quer anunciar? Pode colocar WhatsApp, Instagram, link..." maxlength="500"></textarea>
+      
+      <label>Link da Imagem (opcional):</label>
+      <input type="text" id="imgAnuncio" placeholder="Cole o link de uma imagem aqui">
+
+      <div class="pix-box">
+        <p style="font-weight:bold;color:#f59e0b;">PAGUE R$ 10 VIA PIX</p>
+        <p style="font-size:13px;margin:8px 0;">Chave Pix Celular:</p>
+        <div class="pix-chave" id="chavePix">11999999999</div>
+        <p style="font-size:12px;color:#94a3b8;">Nome: Manuel Silva</p>
+      </div>
+
+      <p style="font-size:13px;color:#f59e0b;margin:10px 0;">
+        Após pagar, clique abaixo e envie o comprovante no WhatsApp. 
+        Seu post entra no ar em até 1 hora.
+      </p>
+
+      <button class="btn btn-zap" onclick="enviarWhatsApp()">ENVIAR COMPROVANTE NO WHATSAPP</button>
+      <button class="btn btn-vermelho" onclick="fecharModalAnunciar()">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- PAINEL ADM -->
+  <div class="container" id="painelAdm">
+    <div class="header">
+      <h1>PAINEL ADM - ANUNCIAR 🔐</h1>
+    </div>
+    
+    <h3 style="margin:20px 0;">Posts Pendentes</h3>
+    <div id="listaPendentes"></div>
+
+    <h3 style="margin:30px 0 15px 0;">Configurar Chave Pix</h3>
+    <input type="text" id="novaChavePix" placeholder="Digite sua chave Pix">
+    <button class="btn" onclick="salvarChavePix()">Salvar Chave Pix</button>
+
+    <button class="btn btn-vermelho" onclick="sairAdm()" style="margin-top:30px;">Sair do ADM</button>
+  </div>
+
+  <div class="link-adm" onclick="abrirAdm()">ADM</div>
+
+  <script>
+    const SENHA_ADM = "anunciar123"; // TROCA ESSA SENHA!
+    const SEU_WHATSAPP = "5511999999999"; // COLOCA SEU NÚMERO COM 55 NA FRENTE
+
+    let posts = [];
+    let pendentes = [];
+
+    function carregarDados() {
+      const postsSalvos = localStorage.getItem('anunciarPosts');
+      const pendentesSalvos = localStorage.getItem('anunciarPendentes');
+      const chaveSalva = localStorage.getItem('anunciarChavePix');
+      
+      posts = postsSalvos ? JSON.parse(postsSalvos) : [];
+      pendentes = pendentesSalvos ? JSON.parse(pendentesSalvos) : [];
+      
+      if (chaveSalva) document.getElementById('chavePix').innerText = chaveSalva;
+      
+      renderizarFeed();
+    }
+
+    function salvarDados() {
+      localStorage.setItem('anunciarPosts', JSON.stringify(posts));
+      localStorage.setItem('anunciarPendentes', JSON.stringify(pendentes));
+    }
+
+    function renderizarFeed() {
+      const feed = document.getElementById('feed');
+      feed.innerHTML = '';
+      
+      if (posts.length === 0) {
+        feed.innerHTML = '<p style="text-align:center;color:#94a3b8;margin-top:40px;">Nenhum anúncio ainda. Seja o primeiro!</p>';
+        return;
+      }
+
+      posts.slice().reverse().forEach(post => {
+        const div = document.createElement('div');
+        div.className = 'post';
+        div.innerHTML = `
+          <div class="post-header">
+            <span class="post-autor">${post.nome}</span>
+            <span class="post-patrocinado">PATROCINADO</span>
+          </div>
+          <div class="post-texto">${post.texto}</div>
+          ${post.img ? `<img src="${post.img}" class="post-img" onerror="this.style.display='none'">` : ''}
+          <div class="post-footer">
+            <span onclick="curtir('${post.id}')">❤️ ${post.curtidas}</span>
+            <span>💬 ${post.comentarios}</span>
+          </div>
+          <div class="post-data">${post.data}</div>
+        `;
+        feed.appendChild(div);
+      });
+    }
+
+    function abrirModalAnunciar() {
+      document.getElementById('modalAnunciar').style.display = 'block';
+    }
+
+    function fecharModalAnunciar() {
+      document.getElementById('modalAnunciar').style.display = 'none';
+    }
+
+    function enviarWhatsApp() {
+      const nome = document.getElementById('nomeAnunciante').value.trim();
+      const texto = document.getElementById('textoAnuncio').value.trim();
+      const img = document.getElementById('imgAnuncio').value.trim();
+
+      if (!nome || !texto) {
+        alert("Preenche seu nome e o texto do anúncio!");
+        return;
+      }
+
+      const id = Date.now().toString();
+      const novoPendente = {
+        id: id,
+        nome: nome,
+        texto: texto,
+        img: img,
+        data: new Date().toLocaleDateString('pt-BR')
+      };
+
+      pendentes.push(novoPendente);
+      salvarDados();
+
+      const msg = `Olá! Acabei de pagar R$ 10 no PIX pra anunciar na rede ANUNCIAR.%0A%0ANome: ${nome}%0AAnúncio: ${texto}%0A%0ASegue o comprovante:`;
+      window.open(`https://wa.me/${SEU_WHATSAPP}?text=${msg}`, '_blank');
+      
+      fecharModalAnunciar();
+      alert("Pendência criada! Assim que eu confirmar o Pix no WhatsApp, seu post entra no ar.");
+      
+      document.getElementById('nomeAnunciante').value = '';
+      document.getElementById('textoAnuncio').value = '';
+      document.getElementById('imgAnuncio').value = '';
+    }
+
+    function curtir(id) {
+      const post = posts.find(p => p.id === id);
+      if (post) {
+        post.curtidas++;
+        salvarDados();
+        renderizarFeed();
+      }
+    }
+
+    // ADM
+    function abrirAdm() {
+      const senha = prompt("Senha do ADM:");
+      if (senha === SENHA_ADM) {
+        document.querySelector('.container').style.display = 'none';
+        document.getElementById('painelAdm').style.display = 'block';
+        listarPendentes();
+      } else if (senha !== null) {
+        alert("Senha errada!");
+      }
+    }
+
+    function sairAdm() {
+      document.querySelector('.container').style.display = 'block';
+      document.getElementById('painelAdm').style.display = 'none';
+    }
+
+    function listarPendentes() {
+      const lista = document.getElementById('listaPendentes');
+      lista.innerHTML = '';
+      
+      if (pendentes.length === 0) {
+        lista.innerHTML = '<p style="color:#94a3b8;">Nenhum anúncio pendente.</p>';
+        return;
+      }
+
+      pendentes.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'post-pendente';
+        div.innerHTML = `
+          <p><strong>${p.nome}</strong></p>
+          <p style="margin:10px 0;color:#cbd5e1;">${p.texto}</p>
+          ${p.img ? `<img src="${p.img}" style="width:100%;border-radius:8px;margin:10px 0;">` : ''}
+          <p style="font-size:12px;color:#64748b;">${p.data}</p>
+          <button class="btn" onclick="aprovarPost('${p.id}')" style="background:#22c55e;margin-top:10px;">Aprovar Post</button>
+          <button class="btn btn-vermelho" onclick="rejeitarPost('${p.id}')">Rejeitar</button>
+        `;
+        lista.appendChild(div);
+      });
+    }
+
+    function aprovarPost(id) {
+      const index = pendentes.findIndex(p => p.id === id);
+      if (index !== -1) {
+        const postAprovado = pendentes[index];
+        postAprovado.curtidas = 0;
+        postAprovado.comentarios = 0;
+        posts.push(postAprovado);
+        pendentes.splice(index, 1);
+        salvarDados();
+        listarPendentes();
+        renderizarFeed();
+        alert("Post aprovado e já está no ar!");
+      }
+    }
+
+    function rejeitarPost(id) {
+      if (confirm("Tem certeza? A pessoa já pagou.")) {
+        pendentes = pendentes.filter(p => p.id !== id);
+        salvarDados();
+        listarPendentes();
+      }
+    }
+
+    function salvarChavePix() {
+      const nova = document.getElementById('novaChavePix').value.trim();
+      if (nova) {
+        localStorage.setItem('anunciarChavePix', nova);
+        document.getElementById('chavePix').innerText = nova;
+        alert("Chave Pix atualizada!");
+      }
+    }
+
+    carregarDados();
+  </script>
+</body>
+</html>
