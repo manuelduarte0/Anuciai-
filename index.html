@@ -180,7 +180,7 @@
 
     <div id="feed"></div>
   </div>
-
+  
   <div id="telaMissoes" class="container">
     <div class="header"><h1>MISSÕES 💸</h1><p>Ganhe dinheiro fácil</p></div>
     <button class="btn btn-verde" style="width:100%;margin-bottom:15px;" onclick="copiarLinkConvite()">
@@ -280,7 +280,7 @@
       </div>
       <div class="pix-box">
         <p style="font-weight:bold;color:#f59e0b;">PIX R$ 10,00</p>
-        <p style="font-size:13px;">Chave: <span id="chavePix">11999999999</span></p>
+        <p style="font-size:13px;">Chave: <span id="chavePix">11999999</span></p>
         <p style="font-size:11px;color:#ef4444;margin-top:8px;">⚠️ TROQUE NO PAINEL ADM!</p>
       </div>
       <button class="btn btn-zap" style="width:100%;" onclick="enviarWhatsApp()">PAGUEI - ENVIAR COMPROVANTE</button>
@@ -309,8 +309,7 @@
       </div>
     </div>
   </div>
-
-  <script>
+    <script>
     const SENHA_ADM = "anunciar123";
     const SEU_WHATSAPP = "5585991159693";
     const VALOR_POST = 10;
@@ -472,7 +471,7 @@
         };
         stories = stories.filter(s => s.usuarioId!== usuario.id);
         stories.unshift(story);
-        const umDia = 24 * 60 * 1000;
+        const umDia = 24 * 60 * 60 * 1000;
         stories = stories.filter(s => new Date().getTime() - s.data < umDia);
         localStorage.setItem('anunciarStories', JSON.stringify(stories));
         renderizarStories();
@@ -576,8 +575,7 @@
       navigator.clipboard.writeText(link);
       alert('Link copiado! Manda pros amigos:\n\n' + link);
     }
-
-    function carregarDados() {
+        function carregarDados() {
       posts = JSON.parse(localStorage.getItem('anunciarPosts') || '[]');
       pendentes = JSON.parse(localStorage.getItem('anunciarPendentes') || '[]');
       const chaveSalva = localStorage.getItem('anunciarChavePix');
@@ -857,490 +855,7 @@
         }
       });
     }
-
-    function validarConviteAtivo(idConvidado) {
-      const convidado = JSON.parse(localStorage.getItem('user_' + idConvidado) || '{}');
-      if (!convidado.indicadoPor || convidado.convitePago) return;
-
-      const curtidas = convidado.curtidasHoje || 0;
-      const convidou = convidado.convidados?.length || 0;
-      const indicadorId = convidado.indicadoPor;
-
-      if (curtidas >= 3 && convidou >= 1) {
-        let indicador = JSON.parse(localStorage.getItem('user_' + indicadorId) || '{}');
-        if (!indicador.convidadosPagos) indicador.convidadosPagos = [];
-
-        if (!indicador.convidadosPagos.includes(idConvidado)) {
-          const ganhoConvite = indicador.historico?.filter(h => h.motivo.includes('Convide')).reduce((t, h) => t + h.valor, 0) || 0;
-          if (ganhoConvite < LIMITE_GANHO_CONVITE && fundoUsuarios >= 1.00) {
-            indicador.saldo = (indicador.saldo || 0) + 1.00;
-            indicador.historico = indicador.historico || [];
-            indicador.historico.unshift({ valor: 1.00, motivo: 'Missão: Convide 1 amigo ativo', data: new Date().toLocaleDateString('pt-BR') });
-            indicador.convidadosPagos.push(idConvidado);
-            fundoUsuarios -= 1.00;
-            localStorage.setItem('anunciarFundo', fundoUsuarios);
-            localStorage.setItem('user_' + indicadorId, JSON.stringify(indicador));
-
-            convidado.convitePago = true;
-            localStorage.setItem('user_' + idConvidado, JSON.stringify(convidado));
-          }
-        }
-      }
-    }
-
-    function adicionarSaldo(valor, motivo, tipoMissao) {
-      if (fundoUsuarios < valor) return false;
-
-      const hoje = new Date().toLocaleDateString('pt-BR');
-      const ganhoHoje = usuario.historico.filter(h => h.data === hoje).reduce((t, h) => t + h.valor, 0);
-      if (ganhoHoje + valor > LIMITE_GANHO_TOTAL_DIA) return false;
-
-      if (tipoMissao === 'convite') {
-        const ganhoConvite = usuario.historico.filter(h => h.motivo.includes('Convide')).reduce((t, h) => t + h.valor, 0);
-        if (ganhoConvite >= LIMITE_GANHO_CONVITE) return false;
-      }
-
-      usuario.saldo += valor;
-      fundoUsuarios -= valor;
-      usuario.historico.unshift({ valor, motivo, data: hoje });
-      localStorage.setItem('anunciarFundo', fundoUsuarios);
-      salvarUsuario();
-      return true;
-    }
-
-    function renderizarHistorico() {
-      const hist = document.getElementById('historicoGanhos');
-      hist.innerHTML = '';
-      if (usuario.historico.length === 0) {
-        hist.innerHTML = '<p style="color:#94a3b8;">Nenhum ganho ainda. Complete missões!</p>';
-        return;
-      }
-      usuario.historico.forEach(h => {
-        const div = document.createElement('div');
-        div.className = 'missao';
-        div.innerHTML = `
-          <div>
-            <div>${h.motivo}</div>
-            <div style="font-size:12px;color:#64748b;">${h.data}</div>
-          </div>
-          <div style="color:${h.valor > 0? '#22c55e' : '#ef4444'};">${h.valor > 0? '+' : ''}R$ ${Math.abs(h.valor).toFixed(2)}</div>
-        `;
-        hist.appendChild(div);
-      });
-    }
-
-    function sacarDinheiro() {
-      if (!exigirLogin()) return;
-      if (usuario.saldo < SAQUE_MINIMO) {
-        alert(`Saque mínimo R$ ${SAQUE_MINIMO.toFixed(2)}. Continue fazendo missões!`);
-        return;
-      }
-      const chave = prompt("Digite sua chave Pix pra receber R$ " + usuario.saldo.toFixed(2));
-      if (chave) {
-        alert("Solicitação enviada! Você receberá em até 48h úteis.");
-        usuario.historico.unshift({ valor: -usuario.saldo, motivo: "Saque solicitado", data: new Date().toLocaleDateString('pt-BR') });
-        usuario.saldo = 0;
-        salvarUsuario();
-      }
-    }
-
-    function abrirModalAnunciar() {
-      document.getElementById('modalAnunciar').style.display = 'block';
-    }
-    function fecharModalAnunciar() {
-      document.getElementById('modalAnunciar').style.display = 'none';
-      document.getElementById('nomeAnunciante').value = '';
-      document.getElementById('textoAnuncio').value = '';
-      document.getElementById('midiaArquivo').value = '';
-      document.getElementById('previewMidia').style.display = 'none';
-    }
-
-    function enviarWhatsApp() {
-      const nome = document.getElementById('nomeAnunciante').value.trim();
-      const texto = document.getElementById('textoAnuncio').value.trim();
-      const arquivo = document.getElementById('midiaArquivo').files[0];
-
-      if (!nome ||!texto ||!arquivo) {
-        alert("Preenche tudo: nome, legenda e escolha foto/vídeo da galeria!");
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        const midiaBase64 = event.target.result;
-        const id = Date.now().toString();
-
-        pendentes.push({
-          id,
-          nome,
-          texto,
-          midia: midiaBase64,
-          tipo: arquivo.type.startsWith('video/')? 'video' : 'imagem',
-          data: new Date().toLocaleDateString('pt-BR')
-        });
-        localStorage.setItem('anunciarPendentes', JSON.stringify(pendentes));
-
-        const msg = `Paguei R$ 10 pra anunciar!%0A%0ANome: ${nome}%0ALegenda: ${texto}%0A%0ASegue comprovante + print da imagem:`;
-        window.open(`https://wa.me/${SEU_WHATSAPP}?text=${msg}`, '_blank');
-        fecharModalAnunciar();
-        alert("Pendência criada! Manda o comprovante + print da imagem no WhatsApp.");
-      };
-      reader.readAsDataURL(arquivo);
-    }
-
-    function abrirAdm() {
-      const senha = prompt("Senha do ADM:");
-      if (senha === SENHA_ADM) {
-        document.getElementById('telaFeed').style.display = 'none';
-        document.getElementById('telaMissoes').style.display = 'none';
-        document.getElementById('telaCarteira').style.display = 'none';
-        document.getElementById('telaEntrar').style.display = 'none';
-        document.getElementById('painelAdm').style.display = 'block';
-        listarPendentes();
-                atualizarSaldoTela();
-      } else if (senha!== null) {
-        alert("Senha errada!");
-      }
-    }
-
-    function sairAdm() {
-      document.getElementById('painelAdm').style.display = 'none';
-      document.getElementById('telaFeed').style.display = 'block';
-    }
-
-    function listarPendentes() {
-      const lista = document.getElementById('listaPendentes');
-      lista.innerHTML = '';
-      if (pendentes.length === 0) {
-        lista.innerHTML = '<p style="color:#94a3b8;">Nenhum anúncio pendente.</p>';
-        return;
-      }
-      pendentes.forEach(p => {
-        const div = document.createElement('div');
-        div.className = 'post-pendente';
-        const midiaHTML = p.tipo === 'video'
-     ? `<video src="${p.midia}" style="width:100%;border-radius:8px;margin:10px 0;" controls></video>`
-          : `<img src="${p.midia}" style="width:100%;border-radius:8px;margin:10px 0;">`;
-
-        div.innerHTML = `
-          <p><strong>${p.nome}</strong></p>
-          <p style="margin:10px 0;color:#cbd5e1;">${p.texto}</p>
-          ${midiaHTML}
-          <p style="font-size:12px;color:#64748b;">${p.data}</p>
-          <button class="btn btn-verde" onclick="aprovarPost('${p.id}')" style="margin-top:10px;">Aprovar Post</button>
-          <button class="btn btn-vermelho" onclick="rejeitarPost('${p.id}')">Rejeitar</button>
-        `;
-        lista.appendChild(div);
-      });
-    }
-
-    function aprovarPost(id) {
-      const index = pendentes.findIndex(p => p.id === id);
-      if (index!== -1) {
-        const postAprovado = pendentes[index];
-        postAprovado.curtidas = 0;
-        postAprovado.comentarios = 0;
-        postAprovado.seguidores = 0;
-        postAprovado.curtidoPor = [];
-        postAprovado.views = 0;
-        postAprovado.viewPor = [];
-        postAprovado.comentariosLista = [];
-        postAprovado.empresaId = postAprovado.nome.replace(/\s/g, '').toLowerCase() + Date.now();
-        posts.push(postAprovado);
-        pendentes.splice(index, 1);
-
-        fundoUsuarios += VALOR_POST * PORCENTAGEM_USUARIO;
-        localStorage.setItem('anunciarFundo', fundoUsuarios);
-        localStorage.setItem('anunciarPosts', JSON.stringify(posts));
-        localStorage.setItem('anunciarPendentes', JSON.stringify(pendentes));
-        listarPendentes();
-        renderizarFeed();
-        atualizarSaldoTela();
-        alert("Post aprovado! R$ 5 foi pro fundo dos usuários.");
-      }
-    }
-
-    function rejeitarPost(id) {
-      if (confirm("Tem certeza? O anunciante vai perder o dinheiro.")) {
-        const index = pendentes.findIndex(p => p.id === id);
-        if (index!== -1) {
-          pendentes.splice(index, 1);
-          localStorage.setItem('anunciarPendentes', JSON.stringify(pendentes));
-          listarPendentes();
-          alert("Post rejeitado.");
-        }
-      }
-    }
-
-    function salvarChavePix() {
-      const novaChave = document.getElementById('novaChavePix').value.trim();
-      if (!novaChave) {
-        alert("Digite uma chave Pix válida!");
-        return;
-      }
-      localStorage.setItem('anunciarChavePix', novaChave);
-      document.getElementById('chavePix').innerText = novaChave;
-      document.getElementById('novaChavePix').value = '';
-      alert("Chave Pix salva! Agora aparece pro anunciante.");
-    }
-  </script>
-</body>
-</html>
-    }
-
-    function atualizarSaldoTela() {
-      document.getElementById('meuSaldo').innerText = usuario.saldo.toFixed(2).replace('.', ',');
-      document.getElementById('meuSaldo2').innerText = usuario.saldo.toFixed(2).replace('.', ',');
-      document.getElementById('fundoTotal').innerText = fundoUsuarios.toFixed(2).replace('.', ',');
-    }
-
-    function abrirTela(id, el) {
-      document.getElementById('telaFeed').style.display = 'none';
-      document.getElementById('telaMissoes').style.display = 'none';
-      document.getElementById('telaCarteira').style.display = 'none';
-      document.getElementById('telaEntrar').style.display = 'none';
-      document.getElementById('painelAdm').style.display = 'none';
-      document.getElementById(id).style.display = 'block';
-
-      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('ativo'));
-      if (el) el.classList.add('ativo');
-
-      if (id === 'telaMissoes') renderizarMissoes();
-      if (id === 'telaCarteira') renderizarHistorico();
-    }
-
-    function renderizarFeed() {
-      const feed = document.getElementById('feed');
-      feed.innerHTML = '';
-
-      const postsOrdenados = posts.slice().sort((a, b) => {
-        const segueA = usuario.seguindo.includes(a.empresaId)? 1 : 0;
-        const segueB = usuario.seguindo.includes(b.empresaId)? 1 : 0;
-        return segueB - segueA;
-      });
-
-      postsOrdenados.reverse().forEach(post => {
-        const div = document.createElement('div');
-        div.className = 'post';
-        const jaSegue = usuario.seguindo.includes(post.empresaId);
-
-        div.innerHTML = `
-          ${post.tipo === 'video'?
-            `<video class="post-video" src="${post.midia}" controls onplay="contarView('${post.id}')"></video>` :
-            `<img src="${post.midia}" class="post-img" onerror="this.src='https://via.placeholder.com/400x400/1e293b/f59e0b?text=ANÚNCIO'">`
-          }
-          <div class="post-content">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-              <div class="post-autor">${post.nome}</div>
-              <button onclick="seguirEmpresa('${post.empresaId}')" class="btn-seguir ${jaSegue? 'btn-seguindo' : ''}">
-                ${jaSegue? 'Seguindo ✓' : '+ Seguir'}
-              </button>
-            </div>
-            <div class="post-texto">${post.texto}</div>
-            <div class="post-actions">
-              <span onclick="curtir('${post.id}')">❤️ ${post.curtidas}</span>
-              <span onclick="abrirComentarios('${post.id}')">💬 ${post.comentariosLista?.length || 0}</span>
-              ${post.tipo === 'video'? `<span>👁️ ${formatarViews(post.views || 0)}</span>` : ''}
-              <span class="seguidores-clicavel" onclick="verSeguidores('${post.empresaId}', '${post.nome}')">👥 ${post.seguidores || 0}</span>
-              <span style="margin-left:auto;color:#f59e0b;font-size:11px;">PATROCINADO</span>
-            </div>
-          </div>
-        `;
-        feed.appendChild(div);
-      });
-    }
-
-    function contarView(postId) {
-      if (!usuario.logado) return;
-      const post = posts.find(p => p.id === postId);
-      if (!post) return;
-
-      if (!post.viewPor) post.viewPor = [];
-      if (!post.viewPor.includes(usuario.id)) {
-        post.viewPor.push(usuario.id);
-        post.views = (post.views || 0) + 1;
-        localStorage.setItem('anunciarPosts', JSON.stringify(posts));
-        renderizarFeed();
-      }
-    }
-
-    function formatarViews(num) {
-      if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-      if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
-      return num;
-    }
-
-    function abrirComentarios(postId) {
-      if (!exigirLogin()) return;
-      postComentarioAtual = postId;
-      renderizarComentarios();
-      document.getElementById('modalComentarios').style.display = 'block';
-      document.getElementById('inputComentario').focus();
-    }
-
-    function renderizarComentarios() {
-      const post = posts.find(p => p.id === postComentarioAtual);
-      const lista = document.getElementById('listaComentarios');
-      lista.innerHTML = '';
-
-      if (!post.comentariosLista || post.comentariosLista.length === 0) {
-        lista.innerHTML = '<p style="color:#94a3b8;text-align:center;padding:20px;">Nenhum comentário ainda. Seja o primeiro!</p>';
-        return;
-      }
-
-      post.comentariosLista.slice().reverse().forEach(c => {
-        const div = document.createElement('div');
-        div.style.cssText = 'margin-bottom:15px;display:flex;gap:10px;';
-        div.innerHTML = `
-          <div style="width:32px;height:32px;background:#334155;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">👤</div>
-          <div style="flex:1;">
-            <div style="font-weight:bold;font-size:13px;color:#38bdf8;">${c.nome}</div>
-            <div style="font-size:14px;margin:2px 0;">${c.texto}</div>
-            <div style="font-size:11px;color:#64748b;">${c.data}</div>
-          </div>
-        `;
-        lista.appendChild(div);
-      });
-    }
-
-    function enviarComentario() {
-      const texto = document.getElementById('inputComentario').value.trim();
-      if (!texto) return;
-      if (!exigirLogin()) return;
-
-      const post = posts.find(p => p.id === postComentarioAtual);
-      if (!post.comentariosLista) post.comentariosLista = [];
-
-      post.comentariosLista.push({
-        id: Date.now().toString(),
-        usuarioId: usuario.id,
-        nome: usuario.nome,
-        texto: texto,
-        data: new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'})
-      });
-
-      localStorage.setItem('anunciarPosts', JSON.stringify(posts));
-      document.getElementById('inputComentario').value = '';
-      renderizarComentarios();
-      renderizarFeed();
-    }
-
-    function curtir(id) {
-      if (!exigirLogin()) return;
-      const post = posts.find(p => p.id === id);
-      if (post &&!post.curtidoPor.includes(usuario.id)) {
-        post.curtidas++;
-        post.curtidoPor.push(usuario.id);
-        usuario.curtidasHoje++;
-        localStorage.setItem('anunciarPosts', JSON.stringify(posts));
-        verificarMissao('curtir');
-        validarConviteAtivo(usuario.id);
-        renderizarFeed();
-      }
-    }
-
-    function seguirEmpresa(empresaId) {
-      if (!exigirLogin()) return;
-      const index = usuario.seguindo.indexOf(empresaId);
-      const empresaPosts = posts.filter(p => p.empresaId === empresaId);
-
-      if (index === -1) {
-        usuario.seguindo.push(empresaId);
-        empresaPosts.forEach(p => p.seguidores = (p.seguidores || 0) + 1);
-        verificarMissao('seguir');
-      } else {
-        usuario.seguindo.splice(index, 1);
-        empresaPosts.forEach(p => p.seguidores = Math.max(0, (p.seguidores || 1) - 1));
-      }
-
-      localStorage.setItem('anunciarPosts', JSON.stringify(posts));
-      salvarUsuario();
-      renderizarFeed();
-    }
-
-    function verSeguidores(empresaId, nomeEmpresa) {
-      const todosUsuarios = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key.startsWith('user_')) {
-          const u = JSON.parse(localStorage.getItem(key));
-          if (u.seguindo && u.seguindo.includes(empresaId)) {
-            todosUsuarios.push(u);
-          }
-        }
-      }
-
-      document.getElementById('tituloSeguidores').innerText = `Seguidores de ${nomeEmpresa}`;
-      const lista = document.getElementById('listaSeguidores');
-      lista.innerHTML = '';
-
-      if (todosUsuarios.length === 0) {
-        lista.innerHTML = '<p style="color:#94a3b8;">Ninguém segue ainda. Seja o primeiro!</p>';
-      } else {
-        todosUsuarios.forEach(u => {
-          const div = document.createElement('div');
-          div.className = 'seguidor-item';
-          div.innerHTML = `
-            <div class="seguidor-icone">👤</div>
-            <div>
-              <div style="font-weight:bold;">${u.nome || 'Usuário'}</div>
-              <div style="font-size:12px;color:#64748b;">${u.email || ''}</div>
-            </div>
-          `;
-          lista.appendChild(div);
-        });
-      }
-
-      document.getElementById('modalSeguidores').style.display = 'block';
-    }
-
-    function fecharModal(id) {
-      document.getElementById(id).style.display = 'none';
-    }
-
-    function renderizarMissoes() {
-      const lista = document.getElementById('listaMissoes');
-      lista.innerHTML = '';
-      missoes.forEach(m => {
-        const feita = usuario.missoesFeitas.includes(m.id);
-        let progresso = 0;
-        if (m.tipo === 'curtir') progresso = usuario.curtidasHoje;
-        if (m.tipo === 'seguir') progresso = usuario.seguindo.length;
-        if (m.tipo === 'login') progresso = usuario.diasSeguidos;
-
-        const div = document.createElement('div');
-        div.className = 'missao' + (feita? ' missao-completa' : '');
-        div.innerHTML = `
-          <div>
-            <div style="font-weight:bold;">${m.nome}</div>
-            <div style="font-size:13px;color:#94a3b8;">${feita? 'Completa!' : `Progresso: ${progresso}/${m.meta}`}</div>
-            ${m.desc? `<div style="font-size:11px;color:#64748b;margin-top:4px;">${m.desc}</div>` : ''}
-          </div>
-          <div style="color:#22c55e;font-weight:bold;">+R$ ${m.recompensa.toFixed(2)}</div>
-        `;
-        lista.appendChild(div);
-      });
-    }
-
-    function verificarMissao(tipo) {
-      missoes.forEach(m => {
-        if (m.tipo === tipo &&!usuario.missoesFeitas.includes(m.id)) {
-          let progresso = 0;
-          if (tipo === 'curtir') progresso = usuario.curtidasHoje;
-          if (tipo === 'seguir') progresso = usuario.seguindo.length;
-          if (tipo === 'login') progresso = usuario.diasSeguidos;
-
-          if (progresso >= m.meta) {
-            if (adicionarSaldo(m.recompensa, `Missão: ${m.nome}`, m.tipo)) {
-              usuario.missoesFeitas.push(m.id);
-              salvarUsuario();
-            }
-          }
-        }
-      });
-    }
-
-    function validarConviteAtivo(idConvidado) {
+          function validarConviteAtivo(idConvidado) {
       const convidado = JSON.parse(localStorage.getItem('user_' + idConvidado) || '{}');
       if (!convidado.indicadoPor || convidado.convitePago) return;
 
@@ -1501,7 +1016,7 @@
         const div = document.createElement('div');
         div.className = 'post-pendente';
         const midiaHTML = p.tipo === 'video'
-       ? `<video src="${p.midia}" style="width:100%;border-radius:8px;margin:10px 0;" controls></video>`
+   ? `<video src="${p.midia}" style="width:100%;border-radius:8px;margin:10px 0;" controls></video>`
           : `<img src="${p.midia}" style="width:100%;border-radius:8px;margin:10px 0;">`;
 
         div.innerHTML = `
